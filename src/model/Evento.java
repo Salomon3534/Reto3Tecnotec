@@ -13,12 +13,14 @@ public class Evento {
    private LocalTime horarioFin;
    private String codigoEncuentro;
    private static int eventosCreados;
+   
    //CONSTRUCTORES
   
    public Evento() {
        eventosCreados++;
        this.id = eventosCreados;
    }
+   
    public Evento(String titulo, String ubicacion, String descripcion, LocalDate fechaInicio, LocalDate fechaFin,
            LocalTime horarioInicio, LocalTime horarioFin, String codigoEncuentro) {
        this();
@@ -31,6 +33,7 @@ public class Evento {
        this.horarioFin = horarioFin;
        this.codigoEncuentro = codigoEncuentro;
    }
+   
    //SETTERS
    public void setId(int id) {
        this.id = id;
@@ -59,6 +62,7 @@ public class Evento {
    public void setCodigoEncuentro(String codigoEncuentro) {
        this.codigoEncuentro = codigoEncuentro;
    }
+   
    //GETTERS
   
    public int getId() {
@@ -91,6 +95,7 @@ public class Evento {
    public static int getEventosCreados() {
        return eventosCreados;
    }
+   
    //TOSTRING
    @Override
    public String toString() {
@@ -99,7 +104,7 @@ public class Evento {
                + this.getFechaFin() + '\'' + "\n  Horario: '" + this.getHorarioInicio() + "-" + this.getHorarioFin()
                + '\'' + "\n  Descripción: '" + this.getDescripcion() + '\'';
    }
-   //EQUALS OBJETO
+   //EQUALS
    @Override
    public boolean equals(Object obj) {
        if (this == obj)
