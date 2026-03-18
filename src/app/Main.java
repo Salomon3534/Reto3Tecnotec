@@ -2,11 +2,14 @@
 
 package app;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import model.*;
 import util.*;
 import java.util.Scanner;
+
+import db.ConexionBBDD;
 
 public class Main {
     static ChecksEntradaSalida checks = new ChecksEntradaSalida();
@@ -16,7 +19,9 @@ public class Main {
     static GestorAtendiente gestionAtendientes = new GestorAtendiente();
     static Scanner sc = new Scanner(System.in);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException{
+    	ConexionBBDD.getConexion();
+    	
         System.out.println("#########################################");
         System.out.println("#      BIENVENIDO AL GESTOR DE EVENTOS  #");
         System.out.println("#########################################");
@@ -42,6 +47,7 @@ public class Main {
                 case 3 -> System.out.println("\nGracias por usar el sistema. ¡Hasta pronto!");
             }
         } while (opcion != 3);
+        ConexionBBDD.cerrarConexion();
     }
 
     public static class MenuUsuario {
