@@ -9,16 +9,15 @@ public class Attendant {
 	private String dni;
 	private String password;
 	private String name;
-	private String surname;
+	private String surnames;
 	private String email;
 	
-	public Attendant(int id, String dni, String password, String name, String surname, String email) {
+	public Attendant(String dni, String password, String name, String surnames, String email) {
 		super();
-		this.id = id;
 		this.dni = dni;
 		this.password = password;
 		this.name = name;
-		this.surname = surname;
+		this.surnames = surnames;
 		this.email = email;
 	}
 
@@ -54,12 +53,12 @@ public class Attendant {
 		this.name = name;
 	}
 
-	public String getSurname() {
-		return surname;
+	public String getSurnames() {
+		return surnames;
 	}
 
-	public void setSurname(String surname) {
-		this.surname = surname;
+	public void setSurnames(String surname) {
+		this.surnames = surname;
 	}
 
 	public String getEmail() {
@@ -72,13 +71,13 @@ public class Attendant {
 
 	@Override
 	public String toString() {
-		return "Attendant [id=" + id + ", dni=" + dni + ", password=" + password + ", name=" + name + ", surname="
-				+ surname + ", email=" + email + "]";
+		return "Attendant [dni=" + dni + ", password=" + password + ", name=" + name + ", surnames="
+				+ surnames + ", email=" + email + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(dni, email, id, name, password, surname);
+		return Objects.hash(dni, email, id, name, password, surnames);
 	}
 
 	@Override
@@ -92,7 +91,7 @@ public class Attendant {
 		Attendant other = (Attendant) obj;
 		return Objects.equals(dni, other.dni) && Objects.equals(email, other.email) && id == other.id
 				&& Objects.equals(name, other.name) && Objects.equals(password, other.password)
-				&& Objects.equals(surname, other.surname);
+				&& Objects.equals(surnames, other.surnames);
 	}
 	
 	

@@ -38,9 +38,9 @@ public class ManagerAttendants {
 
             if (atendiente.getDni().equals(dni)) {
 
-                atendiente.setContraseña(contraseña);
-                atendiente.setNombre(nombre);
-                atendiente.setApellidos(apellidos);
+                atendiente.setPassword(contraseña);
+                atendiente.setName(nombre);
+                atendiente.setSurnames(apellidos);
                 atendiente.setEmail(email);
 
                 return "El atendiente se ha actualizado con éxito";

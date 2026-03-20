@@ -2,9 +2,7 @@ package app;
 
 import java.sql.SQLException;
 
-import db.DatabaseConnector;
 import util.TotalManagerEuskalEncounter;
-import view.View;
 import view.ViewEuskalEncounter;
 
 public class Main {
@@ -14,16 +12,9 @@ public class Main {
         ViewEuskalEncounter vee = new ViewEuskalEncounter(new TotalManagerEuskalEncounter());
         db.DatabaseConnector.conectar();
      
+        vee.mainMenu();
         
-            try {
-				vee.();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-     
-        
-            db.DatabaseConnector.cerrarConexion();
+        db.DatabaseConnector.cerrarConexion();
           
     }
 

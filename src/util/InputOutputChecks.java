@@ -11,20 +11,26 @@ public class InputOutputChecks {
 
     static Scanner sc = new Scanner(System.in);
 
-    public int leerEntero(int minimo, int maximo) {
-        int numero;
+    public int getInt(int minInt, int maxInt) {
+    	
+        int numero = 0;
+        
         while (true) {
             try {
                 numero = sc.nextInt();
-                if (numero < minimo || numero > maximo) {
+                if (numero < minInt || numero > maxInt) {
                     throw new IllegalArgumentException(
-                            "El numero no es valido, recuerda que debe de ser entre " + minimo + " y " + maximo);
+                            "El numero no es valido, recuerda que debe de ser entre " + minInt + " y " + maxInt);
                 }
                 sc.nextLine(); // Limpiar buffer
                 return numero;
+                
             } catch (IllegalArgumentException e) {
+            	
                 System.out.println(e.getMessage());
+                
             } catch (Exception e) {
+            	
                 System.out.println("Por favor inserte un numero");
                 sc.nextLine(); // Limpiar buffer en caso de error de tipo
             }
@@ -32,19 +38,22 @@ public class InputOutputChecks {
     }
 
 
-    public String leerString(String mensaje, int longitudMax) {
+    public String getString(String message, int maxLength) {
+    	
         String texto = "";
+        
         while (true) {
+        	
             try {
-                System.out.print(mensaje);
+                System.out.print(message);
                 texto = sc.nextLine();
 
                 if (!texto.matches("[a-zA-ZñÑáéíóúÁÉÍÓÚ 0-9]+")) {
                     throw new Exception("No puede estar vacío o llevar caracteres especiales");
                 }
 
-                if (texto.length() > longitudMax) {
-                    throw new Exception("Se ha excedido la longitud máxima de: " + longitudMax);
+                if (texto.length() > maxLength) {
+                    throw new Exception("Se ha excedido la longitud máxima de: " + maxLength);
                 }
 
                 return texto;
@@ -54,21 +63,24 @@ public class InputOutputChecks {
         }
     }
 
-    public LocalDate leerFecha(String mensaje, String formatoPatron) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(formatoPatron);
-        LocalDate fecha = null;
+    public LocalDate getDate(String message, String format) {
+    	
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        
+        LocalDate cleanDate = null;
         boolean valida = false;
 
         do {
             try {
-                String fechaTexto = leerString(mensaje + " (" + formatoPatron + "): ", 10);
-                fecha = LocalDate.parse(fechaTexto, formatter);
+                String fechaTexto = getString(message + " (" + format + "): ", 10);
+                cleanDate = LocalDate.parse(fechaTexto, formatter);
                 valida = true;
+                
             } catch (DateTimeParseException e) {
-                System.out.println("La fecha no es válida o no respeta el formato " + formatoPatron);
+                System.out.println("La fecha no es válida o no respeta el formato " + format);
             }
         } while (!valida);
-        return fecha;
+        return cleanDate;
     }
 
     public LocalTime leerHora(String mensaje, String formatoPatron) {
@@ -79,7 +91,7 @@ public class InputOutputChecks {
         do {
             try {
 
-                String horaTexto = leerString(mensaje + " (" + formatoPatron + "): ", 8);
+                String horaTexto = getString(mensaje + " (" + formatoPatron + "): ", 8);
                 hora = LocalTime.parse(horaTexto, formatter);
                 valida = true;
             } catch (DateTimeParseException e) {
