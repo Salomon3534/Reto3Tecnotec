@@ -1,108 +1,119 @@
-//v 13/02/2026 12:03
 package util;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import db.DatabaseConnector;
 import model.Guest;
 
 public class ManagerGuests {
 
-    private static ArrayList<Guest> listaInvitados = new ArrayList<>();
+    private ArrayList<Guest> guestList = new ArrayList<>();
 
-    //crear invitado
-    public String crearInvitado(
-            String nombreUsuario,
-            String primerApellido,
-            String segundoApellido,
-            String telefono,
-            String carrera,
-            String correo,
-            String contrasena
-    ) {
-        Guest nuevoInvitado = new Guest(
-                nombreUsuario,
-                primerApellido,
-                segundoApellido,
-                telefono,
-                carrera,
-                correo,
-                contrasena
-        );
-
-        listaInvitados.add(nuevoInvitado);
-
-        return "Invitado con nombre de usuario: " + nombreUsuario + " creado con éxito.";
+    // constructor para inicializar la lista cargando datos de la bd
+    public ManagerGuests() throws SQLException {
+        loadGuests();
     }
 
-    //listar invitados
-    public String listarInvitados() {
-        if (listaInvitados.isEmpty()) {
-            return "No hay invitados por ahora";
-        }
+    // carga todos los registros de la tabla guests en el arraylist local
+    public void loadGuests() throws SQLException {
+        guestList.clear();
+        String query = "SELECT * FROM Guests";
         
-        String listaString = "";
-        for(Guest i : listaInvitados) {
-            listaString += "\n" + i.toString();
-        }
-        return listaString;
-    }
-
-    //actualizar invitado
-    public String actualizarInvitado(
-            String nombreUsuario,
-            String primerApellido,
-            String segundoApellido,
-            String telefono,
-            String carrera,
-            String correo,
-            String contrasena
-    ) {
-        if (listaInvitados.isEmpty()) {
+        try (PreparedStatement preparedStatement = DatabaseConnector.getConexion().prepareStatement(query);
+             ResultSet resultSet = preparedStatement.executeQuery()) {
             
-            return "La lista de invitados está vacía.";
-            
-        }
-
-        for (Guest invitado : listaInvitados) {
-            if (invitado.getNombreUsuario().equals(nombreUsuario)) {
-
-                invitado.setPrimerApellido(primerApellido);
-                invitado.setSegundoApellido(segundoApellido);
-                invitado.setTelefono(telefono);
-                invitado.setCarrera(carrera);
-                invitado.setCorreo(correo);
-                invitado.setContrasena(contrasena);
-
-                return "El invitado se ha actualizado con éxito.";
-               
+            while (resultSet.next()) {
+                // mapeo exacto con los atributos del modelo guest
+                Guest guest = new Guest(
+                    resultSet.getString("username"),
+                    resultSet.getString("name"),
+                    resultSet.getString("surnames"),
+                    resultSet.getString("phoneNumber"),
+                    resultSet.getString("career"),
+                    resultSet.getString("email"),
+                    resultSet.getString("password")
+                );
+                guestList.add(guest);
             }
-            
         }
-        return "No se ha encontrado el usuario.";
     }
 
-    //eliminar invitado
-    public String eliminarInvitado(String nombreUsuario) {
-        if (listaInvitados.isEmpty()) {
-            return "La lista de invitados está vacía.";
-        }
-
+    // inserta un nuevo invitado y actualiza la lista local
+    public String createGuest(String username, String name, String surnames, String phoneNumber, String career, String email, String password) throws SQLException {
+        String query = "INSERT INTO Guests (username, name, surnames, phoneNumber, career, email, password) "
+                     + "VALUES (?, ?, ?, ?, ?, ?, ?)";
         
-        boolean eliminado = listaInvitados.removeIf(invitado -> 
-            invitado.getNombreUsuario().equals(nombreUsuario)
-        );
-
-        if (eliminado) {
-            return "El invitado se ha eliminado con éxito.";
+        try (PreparedStatement preparedStatement = DatabaseConnector.getConexion().prepareStatement(query)) {
+            preparedStatement.setString(1, username);
+            preparedStatement.setString(2, name);
+            preparedStatement.setString(3, surnames);
+            preparedStatement.setString(4, phoneNumber);
+            preparedStatement.setString(5, career);
+            preparedStatement.setString(6, email);
+            preparedStatement.setString(7, password);
+            
+            preparedStatement.executeUpdate();
         }
-
-        return "El invitado no se ha encontrado.";
+        
+        loadGuests();
+        return "invitado '" + username + "' creado y lista actualizada.";
     }
 
-    //conteo
-    public int getCantidadInvitados() {
-        return listaInvitados.size();
+    // devuelve la representacion en texto de todos los invitados locales
+    public String listGuests() {
+        if (guestList.isEmpty()) {
+            return "no hay invitados registrados.";
+        }
+        
+        StringBuilder sb = new StringBuilder();
+        for (Guest g : guestList) {
+            sb.append("\n").append(g.toString());
+        }
+        return sb.toString();
+    }
+
+    // actualiza un invitado usando el objeto guest y sus getters
+    public String updateGuest(Guest guest) throws SQLException {
+        String query = "UPDATE Guests SET name = ?, surnames = ?, phoneNumber = ?, career = ?, email = ?, password = ? WHERE username = ?";
+        
+        try (PreparedStatement preparedStatement = DatabaseConnector.getConexion().prepareStatement(query)) {
+            preparedStatement.setString(1, guest.getName());
+            preparedStatement.setString(2, guest.getSurnames());
+            preparedStatement.setString(3, guest.getPhoneNumber());
+            preparedStatement.setString(4, guest.getCareer());
+            preparedStatement.setString(5, guest.getEmail());
+            preparedStatement.setString(6, guest.getPassword());
+            preparedStatement.setString(7, guest.getUsername());
+            
+            int rows = preparedStatement.executeUpdate();
+            if (rows > 0) {
+                loadGuests();
+                return "invitado actualizado correctamente.";
+            }
+        }
+        return "no se encontro el invitado para actualizar.";
+    }
+
+    // elimina un invitado recibiendo el objeto completo
+    public String deleteGuest(Guest guest) throws SQLException {
+        String query = "DELETE FROM Guests WHERE username = ?";
+        
+        try (PreparedStatement preparedStatement = DatabaseConnector.getConexion().prepareStatement(query)) {
+            preparedStatement.setString(1, guest.getUsername());
+            
+            int rows = preparedStatement.executeUpdate();
+            if (rows > 0) {
+                loadGuests();
+                return "invitado eliminado y lista sincronizada.";
+            }
+        }
+        return "invitado no encontrado.";
+    }
+
+    // retorna la cantidad de invitados cargados en memoria
+    public int getGuestCount() {
+        return guestList.size();
     }
 }
-
-
-

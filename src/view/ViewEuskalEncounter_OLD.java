@@ -47,7 +47,7 @@ public class ViewEuskalEncounter_OLD {
         do {
             OpcionesElecionUsuarioAdmin.mostrar();
             System.out.print("Seleccione su perfil: ");
-            opcion = checks.leerEntero(1, 3);
+            opcion = checks.getInt(1, 3);
             
             switch (opcion) {
                 case 1 -> {
@@ -69,7 +69,7 @@ public class ViewEuskalEncounter_OLD {
             do {
                 OpcionesUsuario.mostrar();
                 System.out.print("Opción: ");
-                opcion = checks.leerEntero(1, 5);
+                opcion = checks.getInt(1, 5);
                 
                 System.out.println(); // Salto de línea estético
                 switch (opcion) {
@@ -103,7 +103,7 @@ public class ViewEuskalEncounter_OLD {
                 System.out.print("Seleccione una entidad a gestionar: ");
 
                 // comprobacion de opcion disponible
-                opcionPrincipal = checks.leerEntero(1, 5);
+                opcionPrincipal = checks.getInt(1, 5);
                 
                 if (opcionPrincipal != 5) {
                     String entidad = obtenerNombreEntidad(opcionPrincipal);
@@ -138,10 +138,10 @@ public class ViewEuskalEncounter_OLD {
                         case 1 -> {
                             System.out.println("\n--- REGISTRAR NUEVO ATENDIENTE ---");
                             System.out.println(gestionAtendientes.crearAtendiente(
-                                checks.leerString("Ingrese DNI: ", 9), 
-                                checks.leerString("Asigne una Contraseña: ", 20),
-                                checks.leerString("Nombre: ", 50), 
-                                checks.leerString("Apellidos: ", 50),
+                                checks.getString("Ingrese DNI: ", 9), 
+                                checks.getString("Asigne una Contraseña: ", 20),
+                                checks.getString("Nombre: ", 50), 
+                                checks.getString("Apellidos: ", 50),
                                 checks.leerEmail("Correo Electrónico: ", 100)));
                         }
 
@@ -154,17 +154,17 @@ public class ViewEuskalEncounter_OLD {
                             System.out.println("\n--- ACTUALIZAR DATOS DE ATENDIENTE ---");
                             System.out.println("Introduce los nuevos datos:");
                             System.out.println(gestionAtendientes.actualizarAtendiente(
-                                checks.leerString("DNI del usuario a modificar: ", 9), 
-                                checks.leerString("Nueva Contraseña: ", 20),
-                                checks.leerString("Nuevo Nombre: ", 50), 
-                                checks.leerString("Nuevos Apellidos: ", 50),
+                                checks.getString("DNI del usuario a modificar: ", 9), 
+                                checks.getString("Nueva Contraseña: ", 20),
+                                checks.getString("Nuevo Nombre: ", 50), 
+                                checks.getString("Nuevos Apellidos: ", 50),
                                 checks.leerEmail("Nuevo Email: ", 100)));
                         }
 
                         case 4 -> {
                             System.out.println("\n--- ELIMINAR ATENDIENTE ---");
                             System.out.println(gestionAtendientes.eliminarAtendiente(
-                                checks.leerString("Ingrese el DNI del atendiente a borrar: ", 9)));
+                                checks.getString("Ingrese el DNI del atendiente a borrar: ", 9)));
                         }
                     }
                 }
@@ -173,10 +173,10 @@ public class ViewEuskalEncounter_OLD {
                         case 1 -> {
                             System.out.println("\n--- PROGRAMAR NUEVO ENCUENTRO ---");
                             System.out.println(gestionEncuentros.crearEncuentro(
-                                checks.leerString("Nombre del encuentro: ", 100), 
-                                checks.leerString("Lugar / Sede: ", 100),
-                                checks.leerFecha("Fecha de inicio", "dd/MM/yyyy"), 
-                                checks.leerFecha("Fecha de finalización", "dd/MM/yyyy")));
+                                checks.getString("Nombre del encuentro: ", 100), 
+                                checks.getString("Lugar / Sede: ", 100),
+                                checks.getDate("Fecha de inicio", "dd/MM/yyyy"), 
+                                checks.getDate("Fecha de finalización", "dd/MM/yyyy")));
                         }
 
                         case 2 -> {
@@ -187,20 +187,20 @@ public class ViewEuskalEncounter_OLD {
                         case 3 -> {
                             System.out.println("\n--- MODIFICAR ENCUENTRO ---");
                             System.out.println("Primero, identifique el encuentro.");
-                            idElegido = checks.leerEntero(0, gestionEncuentros.getCantidadEncuentros());
+                            idElegido = checks.getInt(0, gestionEncuentros.getCantidadEncuentros());
                             System.out.println("Ahora introduzca los nuevos datos:");
                             System.out.println(gestionEncuentros.actualizarEncuentro(
-                                    checks.leerString("Nuevo Nombre: ", 100), 
-                                    checks.leerString("Nuevo Lugar: ", 100),
-                                    checks.leerFecha("Nueva Fecha inicio", "dd/MM/yyyy"), 
-                                    checks.leerFecha("Nueva Fecha fin", "dd/MM/yyyy"),
+                                    checks.getString("Nuevo Nombre: ", 100), 
+                                    checks.getString("Nuevo Lugar: ", 100),
+                                    checks.getDate("Nueva Fecha inicio", "dd/MM/yyyy"), 
+                                    checks.getDate("Nueva Fecha fin", "dd/MM/yyyy"),
                                     idElegido));
                         }
 
                         case 4 -> {
                             System.out.println("\n--- CANCELAR ENCUENTRO ---");
                             System.out.print("Ingrese el ID del encuentro a eliminar: ");
-                            idElegido = checks.leerEntero(0, gestionEncuentros.getCantidadEncuentros());
+                            idElegido = checks.getInt(0, gestionEncuentros.getCantidadEncuentros());
                             System.out.println(gestionEncuentros.eliminarEncuentro(idElegido));
                         }
                     }
@@ -228,7 +228,7 @@ public class ViewEuskalEncounter_OLD {
                             System.out.println("\n--- MODIFICAR EVENTO EXISTENTE ---");
                             System.out.print("Ingrese el ID numérico del evento: ");
                             // Nota: Asumo que tienes un método getCantidadEventos() o usas un rango amplio
-                            Event e = gestionEventos.buscarPorID(checks.leerEntero(0, 9999));
+                            Event e = gestionEventos.buscarPorID(checks.getInt(0, 9999));
                             
                             if (e != null) {
                                 System.out.println("Evento encontrado: " + e.getClass().getSimpleName());
@@ -250,7 +250,7 @@ public class ViewEuskalEncounter_OLD {
                         case 4 -> {
                             System.out.println("\n--- BORRAR EVENTO ---");
                             System.out.print("Ingrese el ID del evento a eliminar: ");
-                            System.out.println(gestionEventos.eliminarEvento(checks.leerEntero(0, 999)));
+                            System.out.println(gestionEventos.eliminarEvento(checks.getInt(0, 999)));
                         }
                     }
                 }
@@ -259,13 +259,13 @@ public class ViewEuskalEncounter_OLD {
                         case 1 -> {
                             System.out.println("\n--- REGISTRAR INVITADO ---");
                             System.out.println(gestionInvitados.crearInvitado(
-                                checks.leerString("Usuario (Nick): ", 30), 
-                                checks.leerString("Primer Apellido: ", 50),
-                                checks.leerString("Segundo Apellido: ", 50), 
-                                checks.leerString("Teléfono de contacto: ", 15),
-                                checks.leerString("Carrera/Estudios: ", 50), 
+                                checks.getString("Usuario (Nick): ", 30), 
+                                checks.getString("Primer Apellido: ", 50),
+                                checks.getString("Segundo Apellido: ", 50), 
+                                checks.getString("Teléfono de contacto: ", 15),
+                                checks.getString("Carrera/Estudios: ", 50), 
                                 checks.leerEmail("Correo personal: ", 100),
-                                checks.leerString("Contraseña temporal: ", 20)));
+                                checks.getString("Contraseña temporal: ", 20)));
                         }
 
                         case 2 -> {
@@ -276,19 +276,19 @@ public class ViewEuskalEncounter_OLD {
                         case 3 -> {
                             System.out.println("\n--- ACTUALIZAR INVITADO ---");
                             System.out.println(gestionInvitados.actualizarInvitado(
-                                checks.leerString("Usuario a buscar: ", 30), 
-                                checks.leerString("Nuevo Apellido 1: ", 50),
-                                checks.leerString("Nuevo Apellido 2: ", 50), 
-                                checks.leerString("Nuevo Teléfono: ", 15),
-                                checks.leerString("Nueva Carrera: ", 50), 
+                                checks.getString("Usuario a buscar: ", 30), 
+                                checks.getString("Nuevo Apellido 1: ", 50),
+                                checks.getString("Nuevo Apellido 2: ", 50), 
+                                checks.getString("Nuevo Teléfono: ", 15),
+                                checks.getString("Nueva Carrera: ", 50), 
                                 checks.leerEmail("Nuevo Email: ", 100),
-                                checks.leerString("Nueva Contraseña: ", 20)));
+                                checks.getString("Nueva Contraseña: ", 20)));
                         }
 
                         case 4 -> {
                             System.out.println("\n--- DAR DE BAJA INVITADO ---");
                             System.out.println(gestionInvitados.eliminarInvitado(
-                                checks.leerString("Ingrese el Usuario (Nick) a eliminar: ", 30)));
+                                checks.getString("Ingrese el Usuario (Nick) a eliminar: ", 30)));
                         }
                     }
                 }
@@ -299,25 +299,25 @@ public class ViewEuskalEncounter_OLD {
         private static Event capturarDatosEvento(int tipo) {
             System.out.println("\nRELLENE LA FICHA DEL EVENTO:");
             System.out.println("--------------------------------");
-            String titulo = checks.leerString("Título del Evento: ", 100);
-            String ubicacion = checks.leerString("Ubicación (Aula/Sala): ", 100);
-            String descripcion = checks.leerString("Breve descripción: ", 200);
-            LocalDate fIni = checks.leerFecha("Fecha de Inicio", "dd/MM/yyyy");
-            LocalDate fFin = checks.leerFecha("Fecha de Finalización", "dd/MM/yyyy");
+            String titulo = checks.getString("Título del Evento: ", 100);
+            String ubicacion = checks.getString("Ubicación (Aula/Sala): ", 100);
+            String descripcion = checks.getString("Breve descripción: ", 200);
+            LocalDate fIni = checks.getDate("Fecha de Inicio", "dd/MM/yyyy");
+            LocalDate fFin = checks.getDate("Fecha de Finalización", "dd/MM/yyyy");
             LocalTime hIni = checks.leerHora("Hora de Inicio", "HH:mm");
             LocalTime hFin = checks.leerHora("Hora de Finalización", "HH:mm");
-            String codigo = checks.leerString("Código ID único (5 chars): ", 5);
+            String codigo = checks.getString("Código ID único (5 chars): ", 5);
 
             return switch (tipo) {
                 case 1 -> new KeynoteSpeech(titulo, ubicacion, descripcion, fIni, fFin, hIni, hFin, codigo, 
-                        checks.leerString("Temática de la conferencia: ", 50));
+                        checks.getString("Temática de la conferencia: ", 50));
                 case 2 -> new RoundTable(titulo, ubicacion, descripcion, fIni, fFin, hIni, hFin, codigo, 
-                        checks.leerEntero(1, 100)); // Pide el número entero para N. Conferencia
+                        checks.getInt(1, 100)); // Pide el número entero para N. Conferencia
                 case 3 -> new ProjectPresentation(titulo, ubicacion, descripcion, fIni, fFin, hIni, hFin, codigo, 
-                        checks.leerString("Tipo de proyecto: ", 50), 
-                        checks.leerString("Detalles del proyecto: ", 200));
+                        checks.getString("Tipo de proyecto: ", 50), 
+                        checks.getString("Detalles del proyecto: ", 200));
                 case 4 -> new PracticalWorkshop(titulo, ubicacion, descripcion, fIni, fFin, hIni, hFin, codigo, 
-                        checks.leerEntero(1, 100)); // Pide el número entero para N. Taller
+                        checks.getInt(1, 100)); // Pide el número entero para N. Taller
                 default -> null;
             };
         }
@@ -331,7 +331,7 @@ public class ViewEuskalEncounter_OLD {
             System.out.println("4. Eliminar");
             System.out.println("5. Volver al menú principal");
             System.out.println("=================================");
-            return checks.leerEntero(1, 5);
+            return checks.getInt(1, 5);
         }
 
         private static int listaTipoEvento() {
@@ -342,7 +342,7 @@ public class ViewEuskalEncounter_OLD {
             System.out.println("3. Presentación de Proyecto");
             System.out.println("4. Taller Práctico");
             System.out.println("5. Cancelar");
-            return checks.leerEntero(1, 5);
+            return checks.getInt(1, 5);
         }
     }
 
