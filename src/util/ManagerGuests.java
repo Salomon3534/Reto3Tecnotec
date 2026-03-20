@@ -4,7 +4,7 @@ package util;
 import java.util.ArrayList;
 import model.Guest;
 
-public class GestorInvitado {
+public class ManagerGuests {
 
     private static ArrayList<Guest> listaInvitados = new ArrayList<>();
 

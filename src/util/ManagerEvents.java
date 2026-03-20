@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import model.Event;
-public class GestorEvento {
+public class ManagerEvents {
    private static ArrayList<Event> listaEventos = new ArrayList<>();
    public String crearEvento(
            Event e

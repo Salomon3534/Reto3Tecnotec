@@ -10,14 +10,14 @@ import model.*;
 
 import util.*;
 
-public class View {
+public class View_SONIA_DELETE {
 	
 	// Atributos
 	private GestionBiblioteca gestionBiblioteca;
 	private Scanner scanner = new Scanner(System.in);
 
 	// Constructor
-	public View(GestionBiblioteca gestionBiblioteca) {
+	public View_SONIA_DELETE(GestionBiblioteca gestionBiblioteca) {
 		this.gestionBiblioteca = gestionBiblioteca;
 	}
 

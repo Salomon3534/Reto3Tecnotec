@@ -3,7 +3,7 @@ package util;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import model.Encounter;
-public class GestorEncuentro {
+public class ManagerEncounters {
 	
 	private static ArrayList<Encounter> listaEncuentros = new ArrayList<>();
 	
@@ -11,7 +11,7 @@ public class GestorEncuentro {
 	public String crearEncuentro(String nombre, String lugar, LocalDate fechaInicio, LocalDate fechaFin) {
 		
 		Encounter nuevoEncuentro = new Encounter(fechaInicio, fechaFin, lugar, nombre);
-		GestorEncuentro.listaEncuentros.add(nuevoEncuentro);
+		ManagerEncounters.listaEncuentros.add(nuevoEncuentro);
 		return "Encuentro con edición: " + listaEncuentros.size() + " creado con éxito.";
 		
 	}

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import model.Attendant;
 
 
-public class GestorAtendiente {
+public class ManagerAttendants {
     private static ArrayList<Attendant> listaAtendientes = new ArrayList<>();
 
     // crear atendiente
@@ -77,6 +77,9 @@ public class GestorAtendiente {
     // conteo
     public int getCantidadAtendientes() {
         return listaAtendientes.size();
+        
+        
+        
     }
 }
 
