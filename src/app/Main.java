@@ -11,12 +11,12 @@ public class Main {
 
     public static void main(String[] args) throws SQLException  {
 	       
-        ViewEuskalEncounter ViewEuskalEncounter = new ViewEuskalEncounter(new TotalManagerEuskalEncounter());
+        ViewEuskalEncounter vee = new ViewEuskalEncounter(new TotalManagerEuskalEncounter());
         db.DatabaseConnector.conectar();
      
         
             try {
-				vistaCine.menu();
+				vee.();
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
