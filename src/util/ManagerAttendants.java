@@ -1,87 +1,79 @@
-//v 13/02/2026 12:09
 package util;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import db.DatabaseConnector;
 import model.Attendant;
 
-
 public class ManagerAttendants {
-    private static ArrayList<Attendant> listaAtendientes = new ArrayList<>();
 
-    // crear atendiente
-    public String crearAtendiente(String dni, String contraseña, String nombre, String apellidos, String email) {
-        Attendant nuevoAtendiente = new Attendant(dni, contraseña, nombre, apellidos, email);
-        listaAtendientes.add(nuevoAtendiente);
-        return  "Atendiente con DNI: " + dni + " agregado con éxito.";
+    private ArrayList<Attendant> attendantsList = new ArrayList<>();
+
+    public ManagerAttendants() throws SQLException {
+        loadAttendants();
     }
 
-    // listar atendientes
-    public String listarAtendientes() {
-        if (listaAtendientes.isEmpty()) {
-            return "No hay atendientes por ahora";
-        }
-        
-        String listaString = "";
-        for(Attendant a : listaAtendientes) {
-            listaString += "\n" + a.toString();
-        }
-        return listaString;
-    }
-
-    // actualizar atendientes
-    public String actualizarAtendiente(String dni, String contraseña, String nombre, String apellidos, String email) {
-        if (listaAtendientes.isEmpty()) {
-
-            return "La lista de atendientes está vacía";
-        }
-        for (Attendant atendiente : listaAtendientes) {
-
-            if (atendiente.getDni().equals(dni)) {
-
-                atendiente.setPassword(contraseña);
-                atendiente.setName(nombre);
-                atendiente.setSurnames(apellidos);
-                atendiente.setEmail(email);
-
-                return "El atendiente se ha actualizado con éxito";
-            
+    public void loadAttendants() throws SQLException {
+        attendantsList.clear();
+        String query = "SELECT * FROM USUARIO";
+        try (PreparedStatement ps = DatabaseConnector.getConexion().prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                attendantsList.add(new Attendant(
+                    rs.getString("DNI"), 
+                    rs.getString("NOMBRE"),
+                    rs.getString("APELLIDO"), 
+                    rs.getString("EMAIL")
+                ));
             }
         }
-        return "El atendiente no se ha encontrado";
     }
 
-    // eliminar atendiente
-    public String eliminarAtendiente(String dni) {
-
-        if (listaAtendientes.isEmpty()) {
-
-            return "La lista de atendientes está vacía";
+    public String createAttendant(String dni, String name, String surname, String email) throws SQLException {
+        String query = "INSERT INTO USUARIO VALUES (?, ?, ?, ?)";
+        try (PreparedStatement ps = DatabaseConnector.getConexion().prepareStatement(query)) {
+            ps.setString(1, dni); ps.setString(2, name); ps.setString(3, surname);
+            ps.setString(6, email);
+            ps.executeUpdate();
         }
-        Attendant atendienteEliminar = null;
-        for (Attendant atendiente : listaAtendientes) {
+        loadAttendants();
+        return "¡Usuario '" + name + "' creado con éxito!";
+    }
 
-            if (atendiente.getDni().equals(dni)) {
+    public String listAttendants() {
+        if (attendantsList.isEmpty()) return "No hay usuarios registrados.";
+        StringBuilder sb = new StringBuilder();
+        for (Attendant a : attendantsList) sb.append(a.toString());
+        return sb.toString();
+    }
 
-                atendienteEliminar = atendiente;
-                break;
+    public String updateAttendants(Attendant a) throws SQLException {
+        String query = "UPDATE USUARIO SET DNI=?, NOMBRE=?, APELLIDO=?, EMAIL=? WHERE DNI=?";
+        try (PreparedStatement ps = DatabaseConnector.getConexion().prepareStatement(query)) {
+            ps.setString(1, a.getDni());
+            ps.setString(2, a.getName());
+            ps.setString(3, a.getSurname());
+            ps.setString(4, a.getEmail());
+            ps.setString(5, a.getDni());
+            if (ps.executeUpdate() > 0) {
+                loadAttendants();
+                return "Datos de '" + a.getName() + "' actualizados correctamente.";
             }
         }
-        if (atendienteEliminar != null) {
-
-            listaAtendientes.remove(atendienteEliminar);
-            return "El atendiente se ha eliminado con éxito";
-        }
-        return "El atendiente no se ha encontrado";
+        return "Error: El usuario no existe.";
     }
 
-    // conteo
-    public int getCantidadAtendientes() {
-        return listaAtendientes.size();
-        
-        
-        
+    public String deleteAttendant(String dni) throws SQLException {
+        String query = "DELETE FROM USUARIO WHERE DNI = ?";
+        try (PreparedStatement ps = DatabaseConnector.getConexion().prepareStatement(query)) {
+            ps.setString(1, dni);
+            if (ps.executeUpdate() > 0) {
+                loadAttendants();
+                return "El usuario con DNI: '" + dni + "' se ha eliminado correctamente.";
+            }
+        }
+        return "Error: No se encontró al usuario con el dni'" + dni + "'.";
     }
 }
-
-
-
