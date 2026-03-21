@@ -1,81 +1,86 @@
-//13/02/2026 12:16
 package util;
+
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Time;
 import java.util.ArrayList;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import db.DatabaseConnector;
 import model.Event;
+
 public class ManagerEvents {
-   private static ArrayList<Event> listaEventos = new ArrayList<>();
-   public String crearEvento(
-           Event e
-   ) {
-       listaEventos.add(e);
-       return e.getClass().getSimpleName() + " creado con éxito. ID: " + e.getId();
-   }
-   public String listarEventos() {
-   	if (listaEventos.isEmpty()) {
-           return "No hay eventos por ahora";
-       }
-      
-       String listaString = "";
-       for(Event e : listaEventos) {
-       	listaString += "\n" + e.toString();
-       }
-       return listaString;
-   }
-   public String actualizarEvento(
-           int id,
-           String titulo,
-           String ubicacion,
-           String descripcion,
-           LocalDate fechaInicio,
-           LocalDate fechaFin,
-           LocalTime horarioInicio,
-           LocalTime horarioFin,
-           String codigoEncuentro
-   ) {
-   	if (listaEventos.isEmpty()) {
-			
-			return "La lista de eventos está vacía";
-			
-		}
-   	
-       for (Event evento : listaEventos) {
-           if (evento.getId() == id) {
-               evento.setTitulo(titulo);
-               evento.setUbicacion(ubicacion);
-               evento.setDescripcion(descripcion);
-               evento.setFechaInicio(fechaInicio);
-               evento.setFechaFin(fechaFin);
-               evento.setHorarioInicio(horarioInicio);
-               evento.setHorarioFin(horarioFin);
-               evento.setCodigoEncuentro(codigoEncuentro);
-               return "Evento " + id + " actualizado.";
-           }
-       }
-       return "No se encontró el ID " + id;
-   }
-   public Event buscarPorID(int id) {
-       Event encontrado = listaEventos.get(id);
-       return encontrado;
-  }
-  
-   public String buscarEvento(Event e) {
-      
-       int id = listaEventos.indexOf(e);
-       return e.getTitulo() + " tiene el ID: " + id + "en la lista de eventos";
-      
-   }
-   public String eliminarEvento(int id) {
-       if (listaEventos.removeIf(e -> e.getId() == id)) {
-           return "Eliminado con éxito";
-       }
-       return "No encontrado";
-   }
-   public int getCantidadEventos() {
-       return listaEventos.size();
-   }
+
+    private ArrayList<Event> eventList = new ArrayList<>();
+
+    public ManagerEvents() throws SQLException {
+        loadEvents();
+    }
+
+    public void loadEvents() throws SQLException {
+        eventList.clear();
+        String query = "SELECT ID, TITULO, UBICACION, DESCRIPCION, FECHA_INICIO, FECHA_FIN, HORARIO_INICIO, HORARIO_FIN, ENCUENTRO_CODIGO FROM EVENTO";
+        try (PreparedStatement ps = DatabaseConnector.getConexion().prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                eventList.add(new Event(
+                    rs.getInt("ID"), 
+                    rs.getString("TITULO"),
+                    rs.getString("UBICACION"), 
+                    rs.getString("DESCRIPCION"),
+                    rs.getDate("FECHA_INICIO"), 
+                    rs.getDate("FECHA_FIN"),
+                    rs.getTime("HORARIO_INICIO"),
+                    rs.getTime("HORARIO_FIN"),
+                    rs.getString("ENCUENTRO_CODIGO")
+                ));
+            }
+        }
+    }
+
+    public String createEvent(String title, String location, String description, Date dateStart, Date dateEnd,
+    		Time hourStart, Time hourEnd, String encounterCode) throws SQLException {
+        String query = "INSERT INTO EVENTO (TITULO , UBICACION, DESCRIPCION, FECHA_INICIO, FECHA_FIN, HORARIO_INICIO, HORARIO_FIN, ENCUENTRO_CODIGO) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement ps = DatabaseConnector.getConexion().prepareStatement(query)) {
+            ps.setString(1, title); ps.setString(2, location); ps.setString(3, description);
+            ps.setDate(4, dateStart); ps.setDate(5, dateEnd); ps.setTime(6, hourStart); ps.setTime(7, hourEnd); ps.setString(8, encounterCode);
+            ps.executeUpdate();
+        }
+        loadEvents();
+        return "¡Evento '" + title + "' creado con éxito!";
+    }
+
+    public String listEvents() {
+        if (eventList.isEmpty()) return "No hay eventos registrados.";
+        StringBuilder sb = new StringBuilder();
+        for (Event e : eventList) sb.append(e.toString());
+        return sb.toString();
+    }
+
+    public String updateEvents(Event e) throws SQLException {
+        String query = "UPDATE EVENTO SET TITULO=?, UBICACION=?, DESCRIPCION=?, FECHA_INICIO=?, FECHA_FIN=?, HORARIO_INICIO=?, HORARIO_FIN=?, ENCUENTRO_CODIGO=? WHERE ID=?";
+        try (PreparedStatement ps = DatabaseConnector.getConexion().prepareStatement(query)) {
+            ps.setString(1, e.getTitle()); ps.setString(2, e.getLocation());
+            ps.setString(3, e.getDescription()); ps.setDate(4, e.getDateStart());
+            ps.setDate(5, e.getDateEnd()); ps.setTime(6, e.getHourStart());
+            ps.setTime(7, e.getHourEnd()); ps.setString(8, e.getEncounterCode()); ps.setInt(9, e.getId());
+            if (ps.executeUpdate() > 0) {
+                loadEvents();
+                return "Datos de '" + e.getTitle() + "' actualizados correctamente.";
+            }
+        }
+        return "Error: El evento no existe.";
+    }
+
+    public String deleteEvent(int id) throws SQLException {
+        String query = "DELETE FROM EVENTO WHERE ID = ?";
+        try (PreparedStatement ps = DatabaseConnector.getConexion().prepareStatement(query)) {
+            ps.setInt(1, id);
+            if (ps.executeUpdate() > 0) {
+                loadEvents();
+                return "Evento con id '" + id + "' eliminado correctamente.";
+            }
+        }
+        return "Error: No se encontró el evento con id '" + id + "'.";
+    }
 }
-
-
-
