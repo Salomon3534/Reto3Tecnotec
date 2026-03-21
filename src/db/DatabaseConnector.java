@@ -2,13 +2,13 @@ package db;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class DatabaseConnector {
     
     private static Connection conexion;
     
-    // modificado para que si la conexion es nula, intente conectar antes de devolverla
     public static Connection getConexion() throws SQLException {
         if (conexion == null || conexion.isClosed()) {
             conectar();
@@ -20,13 +20,12 @@ public class DatabaseConnector {
         DatabaseConnector.conexion = conexion;
     }
    
-    // ahora lanza la excepcion hacia arriba para que el main sepa si algo fallo
     public static void conectar() throws SQLException {
         try {
             // cargamos el driver de mysql
             Class.forName("com.mysql.cj.jdbc.Driver");
             
-            // establecemos la conexion con los datos de tu bd
+            // establecemos la conexion con los datos de bd					BBDD				USER		PASSWORD
             conexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/euskalencounter", "root", "1DAW3");
             
             System.out.println("conexion establecida con exito.");
@@ -40,7 +39,7 @@ public class DatabaseConnector {
         }
     }
 
-    // cierra la conexion de forma segura
+    // cierra la conexion
     public static void cerrarConexion() throws SQLException {
         if (conexion != null && !conexion.isClosed()) {
             conexion.close();

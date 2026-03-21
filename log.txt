@@ -1,0 +1,10 @@
+[2026-03-21 19:51:47] ACTION: CREATE ENCOUNTER - Ubicación: Loca | Resultado: ¡Nuevo encuentro registrado correctamente!
+[2026-03-21 19:56:54] ACTION: ERROR SQL en createAttendant: Parameter index out of range (6 > number of parameters, which is 4).
+[2026-03-21 19:58:28] ACTION: ERROR SQL en createAttendant: Parameter index out of range (6 > number of parameters, which is 4).
+[2026-03-21 21:00:13] ACTION: ERROR SQL (createEvent): Check constraint 'evento_chk_2' is violated.
+[2026-03-21 21:26:51] ACTION: ERROR SQL (createEvent): Check constraint 'evento_chk_2' is violated.
+[2026-03-21 21:41:48] ACTION: ERROR SQL (createEvent): Check constraint 'evento_chk_2' is violated.
+[2026-03-21 21:43:39] ACTION: ERROR SQL (createEvent): Check constraint 'evento_chk_2' is violated.
+[2026-03-21 21:53:07] ACTION: DELETE ENCOUNTER - Código: 4 | Encuentro #4 eliminado.
+[2026-03-21 21:55:09] ACTION: CREATE EVENT - Título: Moronga | Error SQL al insertar: Check constraint 'evento_chk_2' is violated.
+[2026-03-21 21:57:15] ACTION: CREATE EVENT - Título: Moronga  | Evento 'Moronga ' creado con éxito.

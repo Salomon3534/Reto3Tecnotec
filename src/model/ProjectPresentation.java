@@ -1,47 +1,77 @@
 package model;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.sql.Date;
+import java.sql.Time;
 import java.util.Objects;
 
 public class ProjectPresentation extends Event {
 
-    private String presentationType;
+    private String projectType;
+    private String projectDescription;
 
-    public ProjectPresentation(int id, String title, String location, String description, LocalDate dateStart,
-                               LocalDate dateEnd, LocalTime hourStart, LocalTime hourEnd, String encounterCode, 
-                               String presentationType) {
-        super(id, title, location, description, dateStart, dateEnd, hourStart, hourEnd, encounterCode);
-        this.presentationType = presentationType;
+    public ProjectPresentation(int id, String title, String location, String description, Date dateStart,
+                               Date dateEnd, Time hourStart, Time hourEnd, int eCode, 
+                               String projectType, String projectDescription) {
+        super(id, title, location, description, dateStart, dateEnd, hourStart, hourEnd, eCode);
+        this.projectType = projectType;
+        this.projectDescription = projectDescription;
     }
 
-    public String getPresentationType() {
-        return presentationType;
+    // Getters y Setters
+    public String getProjectType() {
+        return projectType;
     }
 
-    public void setPresentationType(String presentationType) {
-        this.presentationType = presentationType;
+    public void setProjectType(String projectType) {
+        this.projectType = projectType;
+    }
+
+    public String getProjectDescription() {
+        return projectDescription;
+    }
+
+    public void setProjectDescription(String projectDescription) {
+        this.projectDescription = projectDescription;
     }
 
     @Override
     public String toString() {
-        return "ProjectPresentation [presentationType=" + presentationType + ", id=" + getId() + ", title=" + getTitle()
-                + ", location=" + getLocation() + ", description=" + getDescription() + ", dateStart="
-                + getDateStart() + ", dateEnd=" + getDateEnd() + ", hourStart=" + getHourStart()
-                + ", hourEnd=" + getHourEnd() + ", encounterCode=" + getEncounterCode() + "]";
+        return "\n**************************************************\n" +
+               "      PRESENTACIÓN PROYECTO: " + getTitle().toUpperCase() + "\n" +
+               "**************************************************\n" +
+               " > ID EVENTO:      " + getId() + "\n" +
+               " > TIPO PROYECTO:  " + projectType + "\n" +
+               " > DESC. PROYECTO: " + projectDescription + "\n" +
+               " > LUGAR:          " + getLocation() + "\n" +
+               " > FECHA:          " + getDateStart() + " al " + getDateEnd() + "\n" +
+               " > HORARIO:        " + getHourStart() + " - " + getHourEnd() + "\n" +
+               " > ENCUENTRO:      " + getEncounterCode() + "\n" +
+               " > DESC. GENERAL:  " + getDescription() + "\n" +
+               "**************************************************";
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), presentationType);
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(projectDescription, projectType);
+		return result;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (!super.equals(obj)) return false;
-        ProjectPresentation other = (ProjectPresentation) obj;
-        return Objects.equals(presentationType, other.presentationType);
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProjectPresentation other = (ProjectPresentation) obj;
+		return Objects.equals(projectDescription, other.projectDescription)
+				&& Objects.equals(projectType, other.projectType);
+	}
+
+    
 }

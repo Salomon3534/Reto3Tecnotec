@@ -1,4 +1,3 @@
-
 package util;
 
 import java.time.LocalDate;
@@ -12,9 +11,7 @@ public class InputOutputChecks {
     static Scanner sc = new Scanner(System.in);
 
     public int getInt(int minInt, int maxInt) {
-    	
         int numero = 0;
-        
         while (true) {
             try {
                 numero = sc.nextInt();
@@ -22,34 +19,29 @@ public class InputOutputChecks {
                     throw new IllegalArgumentException(
                             "El numero no es valido, recuerda que debe de ser entre " + minInt + " y " + maxInt);
                 }
-                sc.nextLine(); // Limpiar buffer
+                sc.nextLine(); 
                 return numero;
-                
             } catch (IllegalArgumentException e) {
-            	
                 System.out.println(e.getMessage());
-                
             } catch (Exception e) {
-            	
                 System.out.println("Por favor inserte un numero");
-                sc.nextLine(); // Limpiar buffer en caso de error de tipo
+                sc.nextLine(); 
             }
         }
     }
 
-
     public String getString(String message, int maxLength) {
-    	
         String texto = "";
-        
         while (true) {
-        	
             try {
                 System.out.print(message);
                 texto = sc.nextLine();
 
-                if (!texto.matches("[a-zA-ZñÑáéíóúÁÉÍÓÚ 0-9]+")) {
-                    throw new Exception("No puede estar vacío o llevar caracteres especiales");
+                if (texto.trim().isEmpty()) {
+                    throw new Exception("La entrada no puede estar vacía");
+                }
+                if (!texto.matches("[a-zA-ZñÑáéíóúÁÉÍÓÚ 0-9\\- .:]+")) {
+                    throw new Exception("Lleva caracteres especiales no permitidos");
                 }
 
                 if (texto.length() > maxLength) {
@@ -64,20 +56,20 @@ public class InputOutputChecks {
     }
 
     public LocalDate getDate(String message, String format) {
-    	
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
-        
         LocalDate cleanDate = null;
         boolean valida = false;
 
         do {
             try {
-                String fechaTexto = getString(message + " (" + format + "): ", 10);
+                System.out.print(message + " (" + format + "): ");
+                String fechaTexto = sc.nextLine();
+                
                 cleanDate = LocalDate.parse(fechaTexto, formatter);
                 valida = true;
                 
             } catch (DateTimeParseException e) {
-                System.out.println("La fecha no es válida o no respeta el formato " + format);
+                System.out.println("Error: La fecha no es válida o no existe. Use el formato " + format);
             }
         } while (!valida);
         return cleanDate;
@@ -90,12 +82,13 @@ public class InputOutputChecks {
 
         do {
             try {
-
-                String horaTexto = getString(mensaje + " (" + formatoPatron + "): ", 8);
+                System.out.print(mensaje + " (" + formatoPatron + "): ");
+                String horaTexto = sc.nextLine();
+                
                 hora = LocalTime.parse(horaTexto, formatter);
                 valida = true;
             } catch (DateTimeParseException e) {
-                System.out.println("La hora no es válida o no respeta el formato " + formatoPatron);
+                System.out.println("Error: La hora no es válida o no existe. Use el formato " + formatoPatron);
             }
         } while (!valida);
         return hora;
@@ -109,7 +102,7 @@ public class InputOutputChecks {
                 texto = sc.nextLine();
 
                 if (!texto.matches("^[\\w.-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$")) {
-                    throw new Exception("No puede estar vacío o llevar caracteres especiales");
+                    throw new Exception("Formato de email no válido");
                 }
 
                 if (texto.length() > longitudMax) {

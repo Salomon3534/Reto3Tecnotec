@@ -83,3 +83,74 @@ public class ManagerEncounters {
 }
 
 
+<<<<<<< Updated upstream
+=======
+    public ManagerEncounters() throws SQLException {
+        loadEncounters();
+    }
+
+    public void loadEncounters() throws SQLException {
+        encountersList.clear();
+        String query = "SELECT * FROM ENCUENTRO";
+        try (PreparedStatement ps = DatabaseConnector.getConexion().prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                encountersList.add(new Encounter(
+                    rs.getInt("CODIGO"), 
+                    rs.getDate("FECHA_INICIO"),
+                    rs.getDate("FECHA_FIN"), 
+                    rs.getString("UBICACION")
+                ));
+            }
+        }
+    }
+
+    // No pedimos 'code' porque la DB lo genera solo (AI)
+    public String createEncounter(Date dateStart, Date dateEnd, String location) throws SQLException {
+        String query = "INSERT INTO ENCUENTRO (FECHA_INICIO, FECHA_FIN, UBICACION) VALUES (?, ?, ?)";
+        try (PreparedStatement ps = DatabaseConnector.getConexion().prepareStatement(query)) {
+            ps.setDate(1, dateStart); 
+            ps.setDate(2, dateEnd);
+            ps.setString(3, location);
+            ps.executeUpdate();
+        }
+        loadEncounters();
+        return "¡Nuevo encuentro registrado correctamente!";
+    }
+
+    public String listEncounters() {
+        if (encountersList.isEmpty()) return "No hay encuentros registrados.";
+        StringBuilder sb = new StringBuilder();
+        for (Encounter e : encountersList) sb.append(e.toString());
+        return sb.toString();
+    }
+
+    public String updateEncounter(Encounter e) throws SQLException {
+        String query = "UPDATE ENCUENTRO SET FECHA_INICIO=?, FECHA_FIN=?, UBICACION=? WHERE CODIGO=?";
+        try (PreparedStatement ps = DatabaseConnector.getConexion().prepareStatement(query)) {
+            ps.setDate(1, e.getDateStart());
+            ps.setDate(2, e.getDateEnd());
+            ps.setString(3, e.getLocation());
+            ps.setInt(4, e.getCode());
+            
+            if (ps.executeUpdate() > 0) {
+                loadEncounters();
+                return "Encuentro #" + e.getCode() + " actualizado.";
+            }
+        }
+        return "Error: No se encontró el encuentro.";
+    }
+
+    public String deleteEncounter(int code) throws SQLException {
+        String query = "DELETE FROM ENCUENTRO WHERE CODIGO = ?";
+        try (PreparedStatement ps = DatabaseConnector.getConexion().prepareStatement(query)) {
+            ps.setInt(1, code);
+            if (ps.executeUpdate() > 0) {
+                loadEncounters();
+                return "Encuentro #" + code + " eliminado.";
+            }
+        }
+        return "Error: No se encontró el encuentro.";
+    }
+}
+>>>>>>> Stashed changes

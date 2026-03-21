@@ -1,46 +1,61 @@
 package model;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.sql.Date;
+import java.sql.Time;
 import java.util.Objects;
 
 public class RoundTable extends Event {
 
-    private String tableType;
+    private int conferenceNumber;
 
-    public RoundTable(int id, String title, String location, String description, LocalDate dateStart,
-                      LocalDate dateEnd, LocalTime hourStart, LocalTime hourEnd, String encounterCode, String tableType) {
-        super(id, title, location, description, dateStart, dateEnd, hourStart, hourEnd, encounterCode);
-        this.tableType = tableType;
+    public RoundTable(int id, String title, String location, String description, Date dateStart,
+                      Date dateEnd, Time hourStart, Time hourEnd, int eCode, int numConf) {
+        super(id, title, location, description, dateStart, dateEnd, hourStart, hourEnd, eCode);
+        this.conferenceNumber = numConf;
     }
 
-    public String getTableType() {
-        return tableType;
+    public int getConferenceNumber() {
+        return conferenceNumber;
     }
 
-    public void setTableType(String tableType) {
-        this.tableType = tableType;
+    public void setConferenceNumber(int tableType) {
+        this.conferenceNumber = tableType;
     }
 
     @Override
     public String toString() {
-        return "RoundTable [tableType=" + tableType + ", id=" + getId() + ", title=" + getTitle()
-                + ", location=" + getLocation() + ", description=" + getDescription() + ", dateStart="
-                + getDateStart() + ", dateEnd=" + getDateEnd() + ", hourStart=" + getHourStart()
-                + ", hourEnd=" + getHourEnd() + ", encounterCode=" + getEncounterCode() + "]";
+        return "\n**************************************************\n" +
+               "           MESA REDONDA: " + getTitle().toUpperCase() + "\n" +
+               "**************************************************\n" +
+               " > ID EVENTO:  " + getId() + "\n" +
+               " > TIPO:       " + conferenceNumber + "\n" +
+               " > LUGAR:      " + getLocation() + "\n" +
+               " > FECHA:      " + getDateStart() + " al " + getDateEnd() + "\n" +
+               " > HORARIO:    " + getHourStart() + " - " + getHourEnd() + "\n" +
+               " > ENCUENTRO:  " + getEncounterCode() + "\n" +
+               " > DESCRIPCIÓN: " + getDescription() + "\n" +
+               "**************************************************";
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), tableType);
-    }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + Objects.hash(conferenceNumber);
+		return result;
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        if (!super.equals(obj)) return false;
-        RoundTable other = (RoundTable) obj;
-        return Objects.equals(tableType, other.tableType);
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (!super.equals(obj))
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RoundTable other = (RoundTable) obj;
+		return conferenceNumber == other.conferenceNumber;
+	}
 }

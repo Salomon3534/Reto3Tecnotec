@@ -17,7 +17,12 @@ public class Main {
             
 
             ViewEuskalEncounter view = new ViewEuskalEncounter(managerTotal);
+            
+            //loop principal del proyecto
             view.mainMenu();
+            
+            //fin y cierre
+            DatabaseConnector.cerrarConexion();
             
         } catch (SQLException e) {
 
