@@ -1,8 +1,8 @@
 
 package model;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.sql.Date;
+import java.sql.Time;
 import java.util.Objects;
 
 public class Event {
@@ -13,20 +13,20 @@ public class Event {
    private String location;
    private String description;
    
-   private LocalDate dateStart;
-   private LocalDate dateEnd;
+   private Date dateStart;
+   private Date dateEnd;
    
-   private LocalTime hourStart;
-   private LocalTime hourEnd;
+   private Time hourStart;
+   private Time hourEnd;
    
    private String encounterCode; //no se para que sirve esto
 
-   public Event(int id, String title, String location, String descryption, LocalDate dateStart, LocalDate dateEnd,
-		LocalTime hourStart, LocalTime hourEnd, String encounterCode) {
+   public Event(int id, String title, String location, String description, Date dateStart, Date dateEnd,
+		Time hourStart, Time hourEnd, String encounterCode) {
 	this.id = id;
 	this.title = title;
 	this.location = location;
-	this.description = descryption;
+	this.description = description;
 	this.dateStart = dateStart;
 	this.dateEnd = dateEnd;
 	this.hourStart = hourStart;
@@ -36,10 +36,6 @@ public class Event {
 
    public int getId() {
 	return id;
-   }
-
-   public void setId(int id) {
-	this.id = id;
    }
 
    public String getTitle() {
@@ -62,39 +58,39 @@ public class Event {
 	return description;
    }
 
-   public void setDescription(String descryption) {
-	this.description = descryption;
+   public void setDescription(String description) {
+	this.description = description;
    }
 
-   public LocalDate getDateStart() {
+   public Date getDateStart() {
 	return dateStart;
    }
 
-   public void setDateStart(LocalDate dateStart) {
+   public void setDateStart(Date dateStart) {
 	this.dateStart = dateStart;
    }
 
-   public LocalDate getDateEnd() {
+   public Date getDateEnd() {
 	return dateEnd;
    }
 
-   public void setDateEnd(LocalDate dateEnd) {
+   public void setDateEnd(Date dateEnd) {
 	this.dateEnd = dateEnd;
    }
 
-   public LocalTime getHourStart() {
+   public Time getHourStart() {
 	return hourStart;
    }
 
-   public void setHourStart(LocalTime hourStart) {
+   public void setHourStart(Time hourStart) {
 	this.hourStart = hourStart;
    }
 
-   public LocalTime getHourEnd() {
+   public Time getHourEnd() {
 	return hourEnd;
    }
 
-   public void setHourEnd(LocalTime hourEnd) {
+   public void setHourEnd(Time hourEnd) {
 	this.hourEnd = hourEnd;
    }
 
