@@ -22,9 +22,11 @@ public class InputOutputChecks {
 				sc.nextLine();
 				return numero;
 			} catch (IllegalArgumentException e) {
-				System.out.println(e.getMessage());
+				System.out.println("Error: " + e.getMessage());
+				System.out.println("Por favor, escríbelo otra vez:");
 			} catch (Exception e) {
-				System.out.println("Por favor inserte un numero");
+				System.out.println("Error: Por favor inserte un numero válido.");
+				System.out.println("Por favor, escríbelo otra vez:");
 				sc.nextLine();
 			}
 		}
@@ -38,10 +40,10 @@ public class InputOutputChecks {
 				texto = sc.nextLine();
 
 				if (texto.trim().isEmpty()) {
-					throw new Exception("La entrada no puede estar vacía");
+					throw new Exception("La entrada no puede estar vacía.");
 				}
-				if (!texto.matches("[a-zA-ZñÑáéíóúÁÉÍÓÚ 0-9\\- .:]+")) {
-					throw new Exception("Lleva caracteres especiales no permitidos");
+				if (!texto.matches("[a-zA-ZñÑáéíóúÁÉÍÓÚ 0-9\\- .:]+,;")) {
+					throw new Exception("Lleva caracteres especiales no permitidos.");
 				}
 
 				if (texto.length() > maxLength) {
@@ -50,7 +52,8 @@ public class InputOutputChecks {
 
 				return texto;
 			} catch (Exception e) {
-				System.out.println("Entrada no válida: " + e.getMessage());
+				System.out.println("Error: Entrada no válida - " + e.getMessage());
+				System.out.println("Por favor, escríbelo otra vez:");
 			}
 		}
 	}
@@ -70,6 +73,7 @@ public class InputOutputChecks {
 
 			} catch (DateTimeParseException e) {
 				System.out.println("Error: La fecha no es válida o no existe. Use el formato " + format);
+				System.out.println("Por favor, escríbelo otra vez:");
 			}
 		} while (!valida);
 		return cleanDate;
@@ -89,6 +93,7 @@ public class InputOutputChecks {
 				valida = true;
 			} catch (DateTimeParseException e) {
 				System.out.println("Error: La hora no es válida o no existe. Use el formato " + formatoPatron);
+				System.out.println("Por favor, escríbelo otra vez:");
 			}
 		} while (!valida);
 		return hora;
@@ -111,7 +116,26 @@ public class InputOutputChecks {
 
 				return texto;
 			} catch (Exception e) {
-				System.out.println("Entrada no válida: " + e.getMessage());
+				System.out.println("Error: Entrada no válida - " + e.getMessage());
+				System.out.println("Por favor, escríbelo otra vez:");
+			}
+		}
+	}
+
+	public String getDni() {
+		String dni = "";
+		while (true) {
+			try {
+				System.out.println("Escribe el DNI:");
+				dni = sc.nextLine();
+
+				if (!dni.matches("^[0-9]{8}[A-Za-z]$")) {
+					throw new Exception("El DNI no cumple el formato.");
+				}
+				return dni;
+			} catch (Exception e) {
+				System.out.println("Error: " + e.getMessage());
+				System.out.println("Por favor, escríbelo otra vez:");
 			}
 		}
 	}
