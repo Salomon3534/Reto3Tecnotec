@@ -115,4 +115,22 @@ public class InputOutputChecks {
 			}
 		}
 	}
+	
+	public String getDni() {
+		String dni = "";
+		while(true){
+			try {
+				System.out.println("Escribe el DNI");
+				dni = sc.nextLine();
+				
+				if(dni.matches("^[0-9]{8}[A-Za-z]$")) {
+					throw new Exception("El DNI no cumple el formato.");
+				}
+				return dni;
+			}catch(Exception e) {
+				System.out.println("El DNI introducido no es correcto.");
+			}
+		}
+		
+	}
 }
