@@ -15,6 +15,18 @@ public class ManagerUsers {
 		loadUsers();
 	}
 
+	/**
+	 * busca un usuario por su DNI en la lista.
+	 */
+	public String getUserByDni(String dni) {
+		for (User u : usersList) {
+			if (u.getDni().equalsIgnoreCase(dni)) {
+				return u.toString();
+			}
+		}
+		return "No se encontró ningún usuario con el DNI: " + dni;
+	}
+
 	public void loadUsers() throws SQLException {
 		usersList.clear();
 		String query = "SELECT * FROM USUARIO";

@@ -15,6 +15,18 @@ public class ManagerGuests {
 		loadGuests();
 	}
 
+	/**
+	 * busca un invitado por su nombre de usuario en la lista.
+	 */
+	public String getGuestByUsername(String username) {
+		for (Guest g : guestList) {
+			if (g.getUsername().equalsIgnoreCase(username)) {
+				return g.toString();
+			}
+		}
+		return "No se encontró ningún invitado con el nombre de usuario: " + username;
+	}
+
 	public void loadGuests() throws SQLException {
 		guestList.clear();
 		String query = "SELECT * FROM invitados";
@@ -23,7 +35,6 @@ public class ManagerGuests {
 				ResultSet rs = ps.executeQuery()) {
 
 			while (rs.next()) {
-
 				guestList.add(new Guest(rs.getString("NOMBRE_USUARIO"), rs.getString("NOMBRE"),
 						rs.getString("APELLIDOS"), rs.getString("TELEFONO"), rs.getString("DESCRIPCION_RECORRIDO"),
 						rs.getString("EMAIL"), rs.getString("CONTRASENA")));
@@ -59,7 +70,6 @@ public class ManagerGuests {
 	}
 
 	public String updateGuest(Guest g) throws SQLException {
-
 		String query = "UPDATE invitados SET NOMBRE=?, APELLIDOS=?, TELEFONO=?, DESCRIPCION_RECORRIDO=?, EMAIL=?, CONTRASENA=? WHERE NOMBRE_USUARIO=?";
 		try (PreparedStatement ps = DatabaseConnector.getConexion().prepareStatement(query)) {
 
@@ -85,7 +95,6 @@ public class ManagerGuests {
 
 			ps.setString(1, username);
 			if (ps.executeUpdate() > 0) {
-
 				loadGuests();
 				return "Invitado '" + username + "' eliminado correctamente.";
 			}

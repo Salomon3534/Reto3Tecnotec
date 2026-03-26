@@ -13,7 +13,7 @@ public class TotalManagerEuskalEncounter {
 	private Logger logger = new Logger();
 
 	public TotalManagerEuskalEncounter() throws SQLException {
-		logger.writeLog("SISTEMA - Managers instanciados y listos.");
+		logger.writeLog("SISTEMA - Gestores instanciados y listos.");
 	}
 
 	public String showLogFile() {
@@ -21,10 +21,11 @@ public class TotalManagerEuskalEncounter {
 	}
 
 	// ENCUENTROS
+
 	public String createEncounter(String location, Date dateStart, Date dateEnd) {
 		try {
 			String result = managerEncounters.createEncounter(location, dateStart, dateEnd);
-			logger.writeLog("CREATE ENCUENTRO - Ubicación: " + location + " | " + result);
+			logger.writeLog("CREAR ENCUENTRO - Ubicación: " + location + " | " + result);
 			return result;
 		} catch (SQLException e) {
 			logger.writeLog("ERROR SQL (createEncounter): " + e.getMessage());
@@ -36,10 +37,16 @@ public class TotalManagerEuskalEncounter {
 		return managerEncounters.listEncounters();
 	}
 
-	public String updateEncounter(Encounter e) {
+	public String getEncounterById(int code) {
+		String result = managerEncounters.getEncounterById(code);
+		logger.writeLog("BUSCAR ENCUENTRO - Código: " + code);
+		return result;
+	}
+
+	public String updateEncounter(Encounter encounter) {
 		try {
-			String result = managerEncounters.updateEncounter(e);
-			logger.writeLog("UPDATE ENCUENTRO - Código: " + e.getCode() + " | " + result);
+			String result = managerEncounters.updateEncounter(encounter);
+			logger.writeLog("ACTUALIZAR ENCUENTRO - Código: " + encounter.getCode() + " | " + result);
 			return result;
 		} catch (SQLException ex) {
 			logger.writeLog("ERROR SQL (updateEncounter): " + ex.getMessage());
@@ -50,7 +57,7 @@ public class TotalManagerEuskalEncounter {
 	public String deleteEncounter(int code) {
 		try {
 			String result = managerEncounters.deleteEncounter(code);
-			logger.writeLog("DELETE ENCUENTRO - Código: " + code + " | " + result);
+			logger.writeLog("ELIMINAR ENCUENTRO - Código: " + code + " | " + result);
 			return result;
 		} catch (SQLException e) {
 			logger.writeLog("ERROR SQL (deleteEncounter): " + e.getMessage());
@@ -59,10 +66,11 @@ public class TotalManagerEuskalEncounter {
 	}
 
 	// EVENTOS
-	public String createEvent(Event e) {
+
+	public String createEvent(Event event) {
 		try {
-			String result = managerEvents.createEvent(e);
-			logger.writeLog("CREATE EVENTO - Título: " + e.getTitle() + " | " + result);
+			String result = managerEvents.createEvent(event);
+			logger.writeLog("CREAR EVENTO - Título: " + event.getTitle() + " | " + result);
 			return result;
 		} catch (SQLException ex) {
 			logger.writeLog("ERROR SQL (createEvent): " + ex.getMessage());
@@ -74,10 +82,16 @@ public class TotalManagerEuskalEncounter {
 		return managerEvents.listEvents();
 	}
 
-	public String updateEvent(Event e) {
+	public String getEventById(int id) {
+		String result = managerEvents.getEventById(id);
+		logger.writeLog("BUSCAR EVENTO - ID: " + id);
+		return result;
+	}
+
+	public String updateEvent(Event event) {
 		try {
-			String result = managerEvents.updateEvent(e);
-			logger.writeLog("UPDATE EVENTO - ID: " + e.getId() + " | " + result);
+			String result = managerEvents.updateEvent(event);
+			logger.writeLog("ACTUALIZAR EVENTO - ID: " + event.getId() + " | " + result);
 			return result;
 		} catch (SQLException ex) {
 			logger.writeLog("ERROR SQL (updateEvent): " + ex.getMessage());
@@ -88,7 +102,7 @@ public class TotalManagerEuskalEncounter {
 	public String deleteEvent(int id) {
 		try {
 			String result = managerEvents.deleteEvent(id);
-			logger.writeLog("DELETE EVENTO - ID: " + id + " | " + result);
+			logger.writeLog("ELIMINAR EVENTO - ID: " + id + " | " + result);
 			return result;
 		} catch (SQLException e) {
 			logger.writeLog("ERROR SQL (deleteEvent): " + e.getMessage());
@@ -97,11 +111,12 @@ public class TotalManagerEuskalEncounter {
 	}
 
 	// INVITADOS
-	public String createGuest(String user, String name, String last, String tel, String career, String email,
-			String pass) {
+
+	public String createGuest(String username, String name, String surnames, String phoneNumber, String career,
+			String email, String password) {
 		try {
-			String result = managerGuests.createGuest(user, name, last, tel, career, email, pass);
-			logger.writeLog("CREATE INVITADO - Usuario: " + user + " | " + result);
+			String result = managerGuests.createGuest(username, name, surnames, phoneNumber, career, email, password);
+			logger.writeLog("CREAR INVITADO - Usuario: " + username + " | " + result);
 			return result;
 		} catch (SQLException e) {
 			logger.writeLog("ERROR SQL (createGuest): " + e.getMessage());
@@ -113,10 +128,16 @@ public class TotalManagerEuskalEncounter {
 		return managerGuests.listGuests();
 	}
 
-	public String updateGuest(Guest g) {
+	public String getGuestByUsername(String username) {
+		String result = managerGuests.getGuestByUsername(username);
+		logger.writeLog("BUSCAR INVITADO - Usuario: " + username);
+		return result;
+	}
+
+	public String updateGuest(Guest guest) {
 		try {
-			String result = managerGuests.updateGuest(g);
-			logger.writeLog("UPDATE INVITADO - Usuario: " + g.getUsername() + " | " + result);
+			String result = managerGuests.updateGuest(guest);
+			logger.writeLog("ACTUALIZAR INVITADO - Usuario: " + guest.getUsername() + " | " + result);
 			return result;
 		} catch (SQLException e) {
 			logger.writeLog("ERROR SQL (updateGuest): " + e.getMessage());
@@ -127,7 +148,7 @@ public class TotalManagerEuskalEncounter {
 	public String deleteGuest(String username) {
 		try {
 			String result = managerGuests.deleteGuest(username);
-			logger.writeLog("DELETE INVITADO - Usuario: " + username + " | " + result);
+			logger.writeLog("ELIMINAR INVITADO - Usuario: " + username + " | " + result);
 			return result;
 		} catch (SQLException e) {
 			logger.writeLog("ERROR SQL (deleteGuest): " + e.getMessage());
@@ -136,10 +157,11 @@ public class TotalManagerEuskalEncounter {
 	}
 
 	// USUARIOS
-	public String createUser(String dni, String name, String last, String email) {
+
+	public String createUser(String dni, String name, String surnames, String email) {
 		try {
-			String result = managerUsers.createUser(dni, name, last, email);
-			logger.writeLog("CREATE USUARIO - DNI: " + dni + " | " + result);
+			String result = managerUsers.createUser(dni, name, surnames, email);
+			logger.writeLog("CREAR USUARIO - DNI: " + dni + " | " + result);
 			return result;
 		} catch (SQLException e) {
 			logger.writeLog("ERROR SQL (createUser): " + e.getMessage());
@@ -151,10 +173,16 @@ public class TotalManagerEuskalEncounter {
 		return managerUsers.listUsers();
 	}
 
-	public String updateUser(User u) {
+	public String getUserByDni(String dni) {
+		String result = managerUsers.getUserByDni(dni);
+		logger.writeLog("BUSCAR USUARIO - DNI: " + dni);
+		return result;
+	}
+
+	public String updateUser(User user) {
 		try {
-			String result = managerUsers.updateUser(u);
-			logger.writeLog("UPDATE USUARIO - DNI: " + u.getDni() + " | " + result);
+			String result = managerUsers.updateUser(user);
+			logger.writeLog("ACTUALIZAR USUARIO - DNI: " + user.getDni() + " | " + result);
 			return result;
 		} catch (SQLException e) {
 			logger.writeLog("ERROR SQL (updateUser): " + e.getMessage());
@@ -165,7 +193,7 @@ public class TotalManagerEuskalEncounter {
 	public String deleteUser(String dni) {
 		try {
 			String result = managerUsers.deleteUser(dni);
-			logger.writeLog("DELETE USUARIO - DNI: " + dni + " | " + result);
+			logger.writeLog("ELIMINAR USUARIO - DNI: " + dni + " | " + result);
 			return result;
 		} catch (SQLException e) {
 			logger.writeLog("ERROR SQL (deleteUser): " + e.getMessage());
