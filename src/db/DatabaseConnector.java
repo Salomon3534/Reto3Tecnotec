@@ -22,8 +22,7 @@ public class DatabaseConnector {
 
 	public static void conectar() throws SQLException {
 		try {
-			// cargamos el driver de MySQL (opcional en versiones modernas de JDBC, pero
-			// recomendado)
+			// cargamos el driver de MySQL
 			Class.forName("com.mysql.cj.jdbc.Driver");
 
 			// establecemos la conexión

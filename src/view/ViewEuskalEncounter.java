@@ -2,18 +2,82 @@ package view;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.util.Scanner;
 import model.*;
-import util.InputOutputChecks;
 import util.TotalManagerEuskalEncounter;
 
 public class ViewEuskalEncounter {
 
-	private InputOutputChecks checksInputOutput = new InputOutputChecks();
+	private Scanner sc = new Scanner(System.in);
 	private TotalManagerEuskalEncounter totalManager;
 
 	public ViewEuskalEncounter(TotalManagerEuskalEncounter totalManagerEuskalEncounter) {
 		this.totalManager = totalManagerEuskalEncounter;
 	}
+
+	// Métodos privados de validación
+
+	private int readInt(int min, int max) {
+		while (true) {
+			try {
+				int numero = Integer.parseInt(sc.nextLine());
+				if (numero < min || numero > max) {
+					throw new IllegalArgumentException("Rango permitido: " + min + " - " + max);
+				}
+				return numero;
+			} catch (Exception e) {
+				System.out.println("Error: " + e.getMessage() + ". Inténtalo de nuevo:");
+			}
+		}
+	}
+
+	private String readString(String message, int maxLength) {
+		while (true) {
+			try {
+				System.out.print(message);
+				String texto = sc.nextLine();
+				if (texto.trim().isEmpty())
+					throw new Exception("La entrada no puede estar vacía.");
+				if (texto.length() > maxLength)
+					throw new Exception("Longitud máxima: " + maxLength);
+				if (!texto.matches("[a-zA-ZñÑáéíóúÁÉÍÓÚ 0-9\\- .:,;]+"))
+					throw new Exception("Caracteres no permitidos.");
+				return texto;
+			} catch (Exception e) {
+				System.out.println("Error: " + e.getMessage() + ". Reintenta:");
+			}
+		}
+	}
+
+	private String readEmail(String message, int maxLength) {
+		while (true) {
+			try {
+				System.out.print(message + " (ejemplo: usuario@dominio.com): ");
+				String texto = sc.nextLine();
+				if (!texto.matches("^[\\w.-]+@([\\w-]+\\.)+[a-zA-Z]{2,}$"))
+					throw new Exception("Email inválido.");
+				return texto;
+			} catch (Exception e) {
+				System.out.println("Error: " + e.getMessage() + ". Reintenta:");
+			}
+		}
+	}
+
+	private String readDni() {
+		while (true) {
+			try {
+				System.out.print("DNI (8 números + 1 letra): ");
+				String dni = sc.nextLine();
+				if (!dni.matches("^[0-9]{8}[A-Za-z]$"))
+					throw new Exception("Formato DNI incorrecto.");
+				return dni;
+			} catch (Exception e) {
+				System.out.println("Error: " + e.getMessage() + ". Reintenta:");
+			}
+		}
+	}
+
+	// Menús principales
 
 	public void mainMenu() {
 		int choice;
@@ -21,19 +85,15 @@ public class ViewEuskalEncounter {
 			System.out.println("\n========================================");
 			System.out.println(" SISTEMA DE GESTIÓN DE EUSKAL ENCOUNTER");
 			System.out.println("========================================");
-			System.out.println(" 1. Acceso Usuario (Modo Consulta)");
-			System.out.println(" 2. Acceso Administrador (Modo Edición)");
-			System.out.println(" 0. Salir");
-			System.out.print("\nOpción (0-2): ");
-
-			choice = checksInputOutput.getInt(0, 2);
+			System.out.println("1. Acceso Usuario (Modo Consulta)");
+			System.out.println("2. Acceso Administrador (Modo Edición)");
+			System.out.println("0. Salir");
+			choice = readInt(0, 2);
 			if (choice == 1)
 				userMenu();
 			else if (choice == 2)
 				adminMenu();
 		} while (choice != 0);
-
-		System.out.println("\nSaliendo del sistema...");
 	}
 
 	private void userMenu() {
@@ -41,12 +101,10 @@ public class ViewEuskalEncounter {
 		do {
 			System.out.println("\n--- VISTA DE USUARIO ---");
 			System.out.println("1. Ver Encuentros");
-			System.out.println("2. Ver Eventos (Todos)");
+			System.out.println("2. Ver Eventos");
 			System.out.println("3. Ver Invitados");
 			System.out.println("0. Volver");
-			System.out.print("Opción (0-3): ");
-			option = checksInputOutput.getInt(0, 3);
-
+			option = readInt(0, 3);
 			if (option == 1)
 				System.out.println(totalManager.listEncounters());
 			else if (option == 2)
@@ -59,19 +117,14 @@ public class ViewEuskalEncounter {
 	private void adminMenu() {
 		int entity;
 		do {
-			System.out.println("\n===========================");
-			System.out.println("   PANEL DE ADMINISTRADOR  ");
-			System.out.println("===========================");
+			System.out.println("\n--- PANEL DE ADMINISTRADOR ---");
 			System.out.println("1. Gestionar Usuarios");
 			System.out.println("2. Gestionar Encuentros");
 			System.out.println("3. Gestionar Eventos");
 			System.out.println("4. Gestionar Invitados");
-			System.out.println("5. Leer fichero log (historial de acciones)");
+			System.out.println("5. Leer fichero log");
 			System.out.println("0. Volver");
-			System.out.print("Seleccione acción (0-5): ");
-
-			entity = checksInputOutput.getInt(0, 5);
-
+			entity = readInt(0, 5);
 			switch (entity) {
 			case 1 -> manageUsers();
 			case 2 -> manageEncounters();
@@ -82,148 +135,53 @@ public class ViewEuskalEncounter {
 		} while (entity != 0);
 	}
 
-	private int showActionMenu(String title) {
+	/**
+	 * Muestra el menú de acciones. Permite definir si se incluye la opción de ID
+	 * Global.
+	 */
+	private int showActionMenu(String title, boolean showExtended) {
 		System.out.println("\n>> GESTIÓN DE " + title.toUpperCase());
 		System.out.println("1. Crear");
-		System.out.println("2. Listar");
+		System.out.println("2. Listar todos");
 		System.out.println("3. Actualizar");
 		System.out.println("4. Eliminar");
-		System.out.println("0. Volver al Panel de Administrador");
-		System.out.print("Acción (0-4): ");
-		return checksInputOutput.getInt(0, 4);
+		System.out.println("5. Buscar por identificador");
+		if (showExtended) {
+			System.out.println("6. Ver próximo ID disponible");
+			System.out.print("Acción (0-6): ");
+			return readInt(0, 6);
+		} else {
+			System.out.print("Acción (0-5): ");
+			return readInt(0, 5);
+		}
 	}
 
-	// EVENTOS
+	// Gestión de entidades
+
 	private void manageEvents() {
 		int action;
 		do {
-			action = showActionMenu("Eventos");
+			action = showActionMenu("Eventos", true);
 			if (action == 0)
 				break;
-
 			try {
 				switch (action) {
 				case 1 -> {
-					System.out.println("\n--- SELECCIONAR TIPO DE EVENTO ---");
-					System.out.println("1. Conferencia Magistral");
-					System.out.println("2. Taller Práctico");
-					System.out.println("3. Presentación");
-					System.out.println("4. Mesa Redonda");
-					System.out.println("5. General");
-					int type = checksInputOutput.getInt(1, 5);
+					System.out.println("Tipo: 1.Conf | 2.Taller | 3.Proyecto | 4.Mesa | 5.Gen");
+					int type = readInt(1, 5);
 					System.out.println(totalManager.createEvent(requestEventData(0, type)));
 				}
 				case 2 -> System.out.println(totalManager.listEvents());
 				case 3 -> {
-					System.out.println(totalManager.listEvents());
-					System.out.print("\nID del evento a modificar (número entero): ");
-					int id = checksInputOutput.getInt(1, 99999);
-
-					System.out.println("Seleccione el nuevo tipo/clase:");
-					System.out.println("1. Conferencia Magistral");
-					System.out.println("2. Taller Práctico");
-					System.out.println("3. Presentación");
-					System.out.println("4. Mesa Redonda");
-					System.out.println("5. General");
-
-					int type = checksInputOutput.getInt(1, 5);
+					System.out.print("ID a modificar: ");
+					int id = readInt(1, 99999);
+					System.out.println("Nuevo tipo: 1.Conf | 2.Taller | 3.Proj | 4.Mesa | 5.Gen");
+					int type = readInt(1, 5);
 					System.out.println(totalManager.updateEvent(requestEventData(id, type)));
 				}
-				case 4 -> {
-					System.out.println(totalManager.listEvents());
-					System.out.print("ID del evento a ELIMINAR (número entero): ");
-					int id = checksInputOutput.getInt(1, 99999);
-					System.out.println(totalManager.deleteEvent(id));
-				}
-				}
-			} catch (Exception e) {
-				System.err.println("\nError en gestión de eventos: " + e.getMessage());
-			}
-		} while (action != 0);
-	}
-
-	private Event requestEventData(int id, int typeChoice) {
-
-		System.out.print("Título (máx 100 caracteres): ");
-		String title = checksInputOutput.getString("", 100);
-
-		System.out.print("Ubicación (máx 150 caracteres): ");
-		String loc = checksInputOutput.getString("", 150);
-
-		System.out.print("Descripción (máx 255 caracteres): ");
-		String desc = checksInputOutput.getString("", 255);
-
-		System.out.print("Fecha Inicio (formato YYYY-MM-DD, ej: 2026-03-22): ");
-		Date dS = Date.valueOf(checksInputOutput.getString("", 10));
-
-		System.out.print("Fecha Fin (formato YYYY-MM-DD, ej: 2026-03-25): ");
-		Date dE = Date.valueOf(checksInputOutput.getString("", 10));
-
-		System.out.print("Hora Inicio (formato HH:MM:SS, ej: 14:30:00): ");
-		Time hS = Time.valueOf(checksInputOutput.getString("", 8));
-
-		System.out.print("Hora Fin (formato HH:MM:SS, ej: 18:00:00): ");
-		Time hE = Time.valueOf(checksInputOutput.getString("", 8));
-
-		System.out.print("Código Encuentro (FK, número entero): ");
-		int fk = checksInputOutput.getInt(1, 999999);
-
-		return switch (typeChoice) {
-		case 1 -> {
-			System.out.print("Tipo de Conferencia (texto): ");
-			yield new KeynoteSpeech(id, title, loc, desc, dS, dE, hS, hE, fk, checksInputOutput.getString("", 100));
-		}
-		case 2 -> {
-			System.out.print("Número de Taller (entero): ");
-			yield new PracticalWorkshop(id, title, loc, desc, dS, dE, hS, hE, fk, checksInputOutput.getInt(1, 999));
-		}
-		case 3 -> {
-			System.out.print("Tipo de Proyecto (texto): ");
-			String tp = checksInputOutput.getString("", 100);
-			System.out.print("Descripción Detallada (máx 500 caracteres): ");
-			String dp = checksInputOutput.getString("", 500);
-			yield new ProjectPresentation(id, title, loc, desc, dS, dE, hS, hE, fk, tp, dp);
-		}
-		case 4 -> {
-			System.out.print("Número de Conferencia (entero): ");
-			yield new RoundTable(id, title, loc, desc, dS, dE, hS, hE, fk, checksInputOutput.getInt(1, 999));
-		}
-		default -> new Event(id, title, loc, desc, dS, dE, hS, hE, fk);
-		};
-	}
-
-	// ENCUENTROS
-	private void manageEncounters() {
-		int action;
-		do {
-			action = showActionMenu("Encuentros");
-			if (action == 0)
-				break;
-
-			try {
-				switch (action) {
-				case 1 -> {
-					System.out.print("Ubicación (máx 150 caracteres): ");
-					String loc = checksInputOutput.getString("", 150);
-
-					System.out.print("Fecha Inicio (YYYY-MM-DD, ej: 2026-03-22): ");
-					Date start = Date.valueOf(checksInputOutput.getString("", 10));
-
-					System.out.print("Fecha Fin (YYYY-MM-DD, ej: 2026-03-25): ");
-					Date end = Date.valueOf(checksInputOutput.getString("", 10));
-
-					System.out.println(totalManager.createEncounter(loc, start, end));
-				}
-				case 2 -> System.out.println(totalManager.listEncounters());
-				case 3 -> {
-					System.out.println(totalManager.listEncounters());
-					System.out.println(totalManager.updateEncounter(getEncounterData()));
-				}
-				case 4 -> {
-					System.out.println(totalManager.listEncounters());
-					System.out.print("ID del encuentro a ELIMINAR (entero): ");
-					System.out.println(totalManager.deleteEncounter(checksInputOutput.getInt(1, 99999)));
-				}
+				case 4 -> System.out.println(totalManager.deleteEvent(readInt(1, 99999)));
+				case 5 -> System.out.println(totalManager.getEventById(readInt(1, 99999)));
+				case 6 -> System.out.println("Próximo ID Evento: " + totalManager.getGlobalCounterEvent());
 				}
 			} catch (Exception e) {
 				System.err.println("Error: " + e.getMessage());
@@ -231,145 +189,102 @@ public class ViewEuskalEncounter {
 		} while (action != 0);
 	}
 
-	private Encounter getEncounterData() {
-		System.out.print("ID del encuentro (entero): ");
-		int id = checksInputOutput.getInt(1, 9999);
-
-		System.out.print("Nueva Ubicación (máx 150 caracteres): ");
-		String loc = checksInputOutput.getString("", 150);
-
-		System.out.print("Nueva Fecha Inicio (YYYY-MM-DD): ");
-		Date dS = Date.valueOf(checksInputOutput.getString("", 10));
-
-		System.out.print("Nueva Fecha Fin (YYYY-MM-DD): ");
-		Date dE = Date.valueOf(checksInputOutput.getString("", 10));
-
-		return new Encounter(id, loc, dS, dE);
+	private void manageEncounters() {
+		int action;
+		do {
+			action = showActionMenu("Encuentros", true);
+			if (action == 0)
+				break;
+			try {
+				switch (action) {
+				case 1 -> {
+					String loc = readString("Ubicación: ", 150);
+					Date start = Date.valueOf(readString("Inicio (YYYY-MM-DD): ", 10));
+					Date end = Date.valueOf(readString("Fin (YYYY-MM-DD): ", 10));
+					System.out.println(totalManager.createEncounter(loc, start, end));
+				}
+				case 2 -> System.out.println(totalManager.listEncounters());
+				case 3 -> {
+					int id = readInt(1, 9999);
+					String loc = readString("Nueva Ubicación: ", 150);
+					Date dS = Date.valueOf(readString("Nuevo Inicio (YYYY-MM-DD): ", 10));
+					Date dE = Date.valueOf(readString("Nuevo Fin (YYYY-MM-DD): ", 10));
+					System.out.println(totalManager.updateEncounter(new Encounter(id, loc, dS, dE)));
+				}
+				case 4 -> System.out.println(totalManager.deleteEncounter(readInt(1, 99999)));
+				case 5 -> System.out.println(totalManager.getEncounterById(readInt(1, 99999)));
+				case 6 -> System.out.println("Próximo ID Encuentro: " + totalManager.getGlobalCounterEncounter());
+				}
+			} catch (Exception e) {
+				System.err.println("Error: " + e.getMessage());
+			}
+		} while (action != 0);
 	}
 
-	// INVITADOS
 	private void manageGuests() {
 		int action;
 		do {
-			action = showActionMenu("Invitados");
+			action = showActionMenu("Invitados", false); // Opción 6 desactivada
 			if (action == 0)
 				break;
-
-			switch (action) {
-			case 1 -> {
-				System.out.print("Username (máx 50 caracteres): ");
-				String u = checksInputOutput.getString("", 50);
-
-				System.out.print("Nombre (máx 100 caracteres): ");
-				String n = checksInputOutput.getString("", 100);
-
-				System.out.print("Apellidos (máx 150 caracteres): ");
-				String l = checksInputOutput.getString("", 150);
-
-				System.out.print("Teléfono (solo números, máx 15 dígitos): ");
-				String t = checksInputOutput.getString("", 15);
-
-				System.out.print("Carrera (texto): ");
-				String c = checksInputOutput.getString("", 200);
-
-				System.out.print("Email (ej: usuario@email.com): ");
-				String e = checksInputOutput.getEmail("", 150);
-
-				System.out.print("Password (máx 255 caracteres): ");
-				String p = checksInputOutput.getString("", 255);
-
-				System.out.println(totalManager.createGuest(u, n, l, t, c, e, p));
-			}
-			case 2 -> System.out.println(totalManager.listGuests());
-			case 3 -> {
-				System.out.println(totalManager.listGuests());
-				System.out.println(totalManager.updateGuest(getGuestData()));
-			}
-			case 4 -> {
-				System.out.println(totalManager.listGuests());
-				System.out.print("Username a eliminar: ");
-				System.out.println(totalManager.deleteGuest(checksInputOutput.getString("", 50)));
-			}
+			try {
+				switch (action) {
+				case 1 -> System.out.println(totalManager.createGuest(readString("Usuario: ", 50),
+						readString("Nombre: ", 100), readString("Apellidos: ", 150), readString("Teléfono: ", 15),
+						readString("Carrera: ", 200), readEmail("Email", 150), readString("Pass: ", 255)));
+				case 2 -> System.out.println(totalManager.listGuests());
+				case 3 -> System.out.println(totalManager.updateGuest(new Guest(readString("Usuario: ", 50),
+						readString("Nombre: ", 100), readString("Apellidos: ", 150), readString("Teléfono: ", 15),
+						readString("Carrera: ", 200), readEmail("Email", 150), readString("Pass: ", 255))));
+				case 4 -> System.out.println(totalManager.deleteGuest(readString("Usuario a borrar: ", 50)));
+				case 5 -> System.out.println(totalManager.getGuestByUsername(readString("Usuario: ", 50)));
+				}
+			} catch (Exception e) {
+				System.err.println("Error: " + e.getMessage());
 			}
 		} while (action != 0);
 	}
 
-	private Guest getGuestData() {
-		System.out.print("Username actual: ");
-		String u = checksInputOutput.getString("", 50);
-
-		System.out.print("Nombre: ");
-		String n = checksInputOutput.getString("", 100);
-
-		System.out.print("Apellidos: ");
-		String l = checksInputOutput.getString("", 150);
-
-		System.out.print("Teléfono (solo números): ");
-		String t = checksInputOutput.getString("", 15);
-
-		System.out.print("Carrera: ");
-		String c = checksInputOutput.getString("", 200);
-
-		System.out.print("Email (ej: usuario@email.com): ");
-		String e = checksInputOutput.getEmail("", 150);
-
-		System.out.print("Password: ");
-		String p = checksInputOutput.getString("", 255);
-
-		return new Guest(u, n, l, t, c, e, p);
-	}
-
-	// USUARIOS
 	private void manageUsers() {
 		int action;
 		do {
-			action = showActionMenu("Usuarios");
+			action = showActionMenu("Usuarios", false); // Opción 6 desactivada
 			if (action == 0)
 				break;
-
-			switch (action) {
-			case 1 -> {
-				System.out.print("DNI (formato: 12345678A): ");
-				String d = checksInputOutput.getString("", 9);
-
-				System.out.print("Nombre: ");
-				String n = checksInputOutput.getString("", 100);
-
-				System.out.print("Apellido: ");
-				String l = checksInputOutput.getString("", 150);
-
-				System.out.print("Email (ej: usuario@email.com): ");
-				String e = checksInputOutput.getEmail("", 150);
-
-				System.out.println(totalManager.createUser(d, n, l, e));
-			}
-			case 2 -> System.out.println(totalManager.listUsers());
-			case 3 -> {
-				System.out.println(totalManager.listUsers());
-				System.out.println(totalManager.updateUser(getUserData()));
-			}
-			case 4 -> {
-				System.out.println(totalManager.listUsers());
-				System.out.print("DNI a eliminar: ");
-				System.out.println(totalManager.deleteUser(checksInputOutput.getString("", 20)));
-			}
+			try {
+				switch (action) {
+				case 1 -> System.out.println(totalManager.createUser(readDni(), readString("Nombre: ", 100),
+						readString("Apellido: ", 150), readEmail("Email", 150)));
+				case 2 -> System.out.println(totalManager.listUsers());
+				case 3 -> System.out.println(totalManager.updateUser(new User(readDni(), readString("Nombre: ", 100),
+						readString("Apellido: ", 150), readEmail("Email", 150))));
+				case 4 -> System.out.println(totalManager.deleteUser(readDni()));
+				case 5 -> System.out.println(totalManager.getUserByDni(readDni()));
+				}
+			} catch (Exception e) {
+				System.err.println("Error: " + e.getMessage());
 			}
 		} while (action != 0);
 	}
 
-	private User getUserData() {
-		System.out.print("DNI actual (formato 12345678A): ");
-		String d = checksInputOutput.getString("", 20);
+	private Event requestEventData(int id, int typeChoice) {
+		String title = readString("Título: ", 100);
+		String loc = readString("Ubicación: ", 150);
+		String desc = readString("Descripción: ", 255);
+		Date dS = Date.valueOf(readString("Fecha Inicio (YYYY-MM-DD): ", 10));
+		Date dE = Date.valueOf(readString("Fecha Fin (YYYY-MM-DD): ", 10));
+		Time hS = Time.valueOf(readString("Hora Inicio (HH:MM:SS): ", 8));
+		Time hE = Time.valueOf(readString("Hora Fin (HH:MM:SS): ", 8));
+		System.out.print("ID Encuentro Relacionado: ");
+		int fk = readInt(1, 999999);
 
-		System.out.print("Nombre: ");
-		String n = checksInputOutput.getString("", 100);
-
-		System.out.print("Apellido: ");
-		String l = checksInputOutput.getString("", 150);
-
-		System.out.print("Email (ej: usuario@email.com): ");
-		String e = checksInputOutput.getEmail("", 150);
-
-		return new User(d, n, l, e);
+		return switch (typeChoice) {
+		case 1 -> new KeynoteSpeech(id, title, loc, desc, dS, dE, hS, hE, fk, readString("Tipo Conf: ", 100));
+		case 2 -> new PracticalWorkshop(id, title, loc, desc, dS, dE, hS, hE, fk, readInt(1, 999));
+		case 3 -> new ProjectPresentation(id, title, loc, desc, dS, dE, hS, hE, fk, readString("Tipo Proj: ", 100),
+				readString("Desc larga: ", 500));
+		case 4 -> new RoundTable(id, title, loc, desc, dS, dE, hS, hE, fk, readInt(1, 999));
+		default -> new Event(id, title, loc, desc, dS, dE, hS, hE, fk);
+		};
 	}
 }

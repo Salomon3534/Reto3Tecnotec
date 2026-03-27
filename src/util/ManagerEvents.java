@@ -14,6 +14,20 @@ public class ManagerEvents {
 		loadEvents();
 	}
 
+	// busca un evento por su identificador en la lista.
+	public String getEventById(int id) {
+		for (Event e : eventList) {
+			if (e.getId() == id) {
+				return e.toString();
+			}
+		}
+		return "No se encontró ningún evento con el identificador: " + id;
+	}
+
+	/*
+	 * carga todos los eventos de la base de datos, incluyendo su subtipo, para
+	 * tenerlos disponibles en la lista de eventos.
+	 */
 	public void loadEvents() throws SQLException {
 		eventList.clear();
 		String query = "SELECT e.*, c.TIPO_DE_CONFERENCIA, t.NUMERO_TALLER, "
@@ -55,18 +69,15 @@ public class ManagerEvents {
 	}
 
 	/*
-	 * inserta un evento usa transacciones para asegurar que si falla la inserción
-	 * del subtipo, para que no se quede un evento huerfano en la tabla base.
+	 * Inserta un evento usando transacciones para asegurar que haya datos en los
+	 * datos entre la tabla base y las tablas de subtipos.
 	 */
 	public String createEvent(Event e) throws SQLException {
-
 		String queryBase = "INSERT INTO evento (TITULO, UBICACION, DESCRIPCION, FECHA_INICIO, FECHA_FIN, HORARIO_INICIO, HORARIO_FIN, ENCUENTRO_CODIGO) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 		Connection con = DatabaseConnector.getConexion();
 
 		try {
-
-			con.setAutoCommit(false); // descativamos el cambio inmediato
-
+			con.setAutoCommit(false);
 			try (PreparedStatement ps = con.prepareStatement(queryBase, Statement.RETURN_GENERATED_KEYS)) {
 				ps.setString(1, e.getTitle());
 				ps.setString(2, e.getLocation());
@@ -87,19 +98,15 @@ public class ManagerEvents {
 				}
 
 				con.commit();
-
 				loadEvents();
-
 				return "Evento '" + e.getTitle() + "' creado con éxito.";
 
 			} catch (SQLException ex) {
 				con.rollback();
 				return "Error SQL al insertar: " + ex.getMessage();
-
-			} finally { // que lo va a ejecutar siempre si o si
+			} finally {
 				con.setAutoCommit(true);
 			}
-
 		} catch (SQLException ex) {
 			return "Error de conexión: " + ex.getMessage();
 		}
@@ -108,8 +115,6 @@ public class ManagerEvents {
 	private void insertSubtype(Connection con, int id, Event e) throws SQLException {
 		String query = "";
 
-		// un "if" para cada tipo (columna SQL)
-
 		if (e instanceof KeynoteSpeech k) {
 			query = "INSERT INTO conferencia_magistral (ID, TIPO_DE_CONFERENCIA) VALUES (?, ?)";
 			try (PreparedStatement ps = con.prepareStatement(query)) {
@@ -117,7 +122,6 @@ public class ManagerEvents {
 				ps.setString(2, k.getSpeechType());
 				ps.executeUpdate();
 			}
-
 		} else if (e instanceof PracticalWorkshop w) {
 			query = "INSERT INTO talleres_practicos (ID, NUMERO_TALLER) VALUES (?, ?)";
 			try (PreparedStatement ps = con.prepareStatement(query)) {
@@ -125,7 +129,6 @@ public class ManagerEvents {
 				ps.setInt(2, w.getWorkshopNumber());
 				ps.executeUpdate();
 			}
-
 		} else if (e instanceof ProjectPresentation p) {
 			query = "INSERT INTO presentacion_de_proyecto (ID, TIPO_DE_PROYECTO, DESCRIPCION_PROYECTO) VALUES (?, ?, ?)";
 			try (PreparedStatement ps = con.prepareStatement(query)) {
@@ -134,7 +137,6 @@ public class ManagerEvents {
 				ps.setString(3, p.getProjectDescription());
 				ps.executeUpdate();
 			}
-
 		} else if (e instanceof RoundTable r) {
 			query = "INSERT INTO mesa_redonda (ID, NUMERO_CONFERENCIA) VALUES (?, ?)";
 			try (PreparedStatement ps = con.prepareStatement(query)) {
@@ -146,14 +148,12 @@ public class ManagerEvents {
 	}
 
 	public String updateEvent(Event e) throws SQLException {
-
 		String queryBase = "UPDATE evento SET TITULO=?, UBICACION=?, DESCRIPCION=?, FECHA_INICIO=?, FECHA_FIN=?, HORARIO_INICIO=?, HORARIO_FIN=?, ENCUENTRO_CODIGO=? WHERE ID=?";
 		Connection con = DatabaseConnector.getConexion();
 
 		try {
 			con.setAutoCommit(false);
 			try (PreparedStatement ps = con.prepareStatement(queryBase)) {
-
 				ps.setString(1, e.getTitle());
 				ps.setString(2, e.getLocation());
 				ps.setString(3, e.getDescription());
@@ -171,12 +171,9 @@ public class ManagerEvents {
 					return "Evento actualizado con éxito.";
 				}
 			} catch (SQLException ex) {
-
-				// se cancela la actualizacion
 				con.rollback();
 				return "Error al actualizar subtipo: " + ex.getMessage();
 			} finally {
-
 				con.setAutoCommit(true);
 			}
 		} catch (SQLException ex) {
@@ -186,7 +183,6 @@ public class ManagerEvents {
 	}
 
 	private void updateSubtype(Connection con, Event e) throws SQLException {
-
 		if (e instanceof KeynoteSpeech k) {
 			String q = "UPDATE conferencia_magistral SET TIPO_DE_CONFERENCIA=? WHERE ID=?";
 			try (PreparedStatement ps = con.prepareStatement(q)) {
@@ -194,7 +190,6 @@ public class ManagerEvents {
 				ps.setInt(2, k.getId());
 				ps.executeUpdate();
 			}
-
 		} else if (e instanceof PracticalWorkshop w) {
 			String q = "UPDATE talleres_practicos SET NUMERO_TALLER=? WHERE ID=?";
 			try (PreparedStatement ps = con.prepareStatement(q)) {
@@ -202,10 +197,8 @@ public class ManagerEvents {
 				ps.setInt(2, w.getId());
 				ps.executeUpdate();
 			}
-
 		} else if (e instanceof ProjectPresentation p) {
 			String q = "UPDATE presentacion_de_proyecto SET TIPO_DE_PROYECTO=?, DESCRIPCION_PROYECTO=? WHERE ID=?";
-
 			try (PreparedStatement ps = con.prepareStatement(q)) {
 				ps.setString(1, p.getProjectType());
 				ps.setString(2, p.getProjectDescription());
@@ -235,7 +228,6 @@ public class ManagerEvents {
 		String query = "DELETE FROM evento WHERE ID = ?";
 		Connection con = DatabaseConnector.getConexion();
 		try (PreparedStatement ps = con.prepareStatement(query)) {
-
 			ps.setInt(1, id);
 			if (ps.executeUpdate() > 0) {
 				loadEvents();
@@ -247,5 +239,23 @@ public class ManagerEvents {
 
 	public int getCantidadEventos() {
 		return eventList.size();
+	}
+
+	// metodo para obtener el proximo valor auto-incremental de la tabla EVENTO
+	public int getGlobalCounter() {
+		String sql = "SELECT AUTO_INCREMENT FROM INFORMATION_SCHEMA.TABLES "
+				+ "WHERE TABLE_SCHEMA = 'EUSKALENCOUNTER' AND TABLE_NAME = 'EVENTO'";
+
+		try (Connection conn = DatabaseConnector.getConexion();
+				PreparedStatement pstmt = conn.prepareStatement(sql);
+				ResultSet rs = pstmt.executeQuery()) {
+
+			if (rs.next()) {
+				return rs.getInt("AUTO_INCREMENT");
+			}
+		} catch (SQLException e) {
+			System.err.println("Error al obtener el contador global: " + e.getMessage());
+		}
+		return -1;
 	}
 }
