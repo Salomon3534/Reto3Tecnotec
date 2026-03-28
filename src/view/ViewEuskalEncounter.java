@@ -1,5 +1,6 @@
 package view;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.Scanner;
@@ -130,7 +131,13 @@ public class ViewEuskalEncounter {
 			case 2 -> manageEncounters();
 			case 3 -> manageEvents();
 			case 4 -> manageGuests();
-			case 5 -> System.out.println(totalManager.showLogFile());
+			case 5 -> {
+				try {
+					System.out.println(totalManager.showLogFile());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 			}
 		} while (entity != 0);
 	}

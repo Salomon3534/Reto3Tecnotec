@@ -1,5 +1,6 @@
 package util;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
 import model.*;
@@ -12,17 +13,17 @@ public class TotalManagerEuskalEncounter {
 	private ManagerUsers managerUsers = new ManagerUsers();
 	private Logger logger = new Logger();
 
-	public TotalManagerEuskalEncounter() throws SQLException {
+	public TotalManagerEuskalEncounter() throws SQLException, IOException {
 		logger.writeLog("SISTEMA - Gestores instanciados y listos.");
 	}
 
-	public String showLogFile() {
+	public String showLogFile() throws IOException {
 		return logger.readLog();
 	}
 
 	// ENCUENTROS
 
-	public String createEncounter(String location, Date dateStart, Date dateEnd) {
+	public String createEncounter(String location, Date dateStart, Date dateEnd) throws IOException {
 		try {
 			String result = managerEncounters.createEncounter(location, dateStart, dateEnd);
 			logger.writeLog("CREAR ENCUENTRO - Ubicación: " + location + " | " + result);
@@ -37,13 +38,13 @@ public class TotalManagerEuskalEncounter {
 		return managerEncounters.listEncounters();
 	}
 
-	public String getEncounterById(int code) {
+	public String getEncounterById(int code) throws IOException {
 		String result = managerEncounters.getEncounterById(code);
 		logger.writeLog("BUSCAR ENCUENTRO - Código: " + code);
 		return result;
 	}
 
-	public String updateEncounter(Encounter encounter) {
+	public String updateEncounter(Encounter encounter) throws IOException {
 		try {
 			String result = managerEncounters.updateEncounter(encounter);
 			logger.writeLog("ACTUALIZAR ENCUENTRO - Código: " + encounter.getCode() + " | " + result);
@@ -54,7 +55,7 @@ public class TotalManagerEuskalEncounter {
 		}
 	}
 
-	public String deleteEncounter(int code) {
+	public String deleteEncounter(int code) throws IOException {
 		try {
 			String result = managerEncounters.deleteEncounter(code);
 			logger.writeLog("ELIMINAR ENCUENTRO - Código: " + code + " | " + result);
@@ -74,7 +75,7 @@ public class TotalManagerEuskalEncounter {
 
 	// EVENTOS
 
-	public String createEvent(Event event) {
+	public String createEvent(Event event) throws IOException {
 		try {
 			String result = managerEvents.createEvent(event);
 			logger.writeLog("CREAR EVENTO - Título: " + event.getTitle() + " | " + result);
@@ -89,13 +90,13 @@ public class TotalManagerEuskalEncounter {
 		return managerEvents.listEvents();
 	}
 
-	public String getEventById(int id) {
+	public String getEventById(int id) throws IOException {
 		String result = managerEvents.getEventById(id);
 		logger.writeLog("BUSCAR EVENTO - ID: " + id);
 		return result;
 	}
 
-	public String updateEvent(Event event) {
+	public String updateEvent(Event event) throws IOException {
 		try {
 			String result = managerEvents.updateEvent(event);
 			logger.writeLog("ACTUALIZAR EVENTO - ID: " + event.getId() + " | " + result);
@@ -106,7 +107,7 @@ public class TotalManagerEuskalEncounter {
 		}
 	}
 
-	public String deleteEvent(int id) {
+	public String deleteEvent(int id) throws IOException {
 		try {
 			String result = managerEvents.deleteEvent(id);
 			logger.writeLog("ELIMINAR EVENTO - ID: " + id + " | " + result);
@@ -127,7 +128,7 @@ public class TotalManagerEuskalEncounter {
 	// INVITADOS
 
 	public String createGuest(String username, String name, String surnames, String phoneNumber, String career,
-			String email, String password) {
+			String email, String password) throws IOException {
 		try {
 			String result = managerGuests.createGuest(username, name, surnames, phoneNumber, career, email, password);
 			logger.writeLog("CREAR INVITADO - Usuario: " + username + " | " + result);
@@ -142,13 +143,13 @@ public class TotalManagerEuskalEncounter {
 		return managerGuests.listGuests();
 	}
 
-	public String getGuestByUsername(String username) {
+	public String getGuestByUsername(String username) throws IOException {
 		String result = managerGuests.getGuestByUsername(username);
 		logger.writeLog("BUSCAR INVITADO - Usuario: " + username);
 		return result;
 	}
 
-	public String updateGuest(Guest guest) {
+	public String updateGuest(Guest guest) throws IOException {
 		try {
 			String result = managerGuests.updateGuest(guest);
 			logger.writeLog("ACTUALIZAR INVITADO - Usuario: " + guest.getUsername() + " | " + result);
@@ -159,7 +160,7 @@ public class TotalManagerEuskalEncounter {
 		}
 	}
 
-	public String deleteGuest(String username) {
+	public String deleteGuest(String username) throws IOException {
 		try {
 			String result = managerGuests.deleteGuest(username);
 			logger.writeLog("ELIMINAR INVITADO - Usuario: " + username + " | " + result);
@@ -172,7 +173,7 @@ public class TotalManagerEuskalEncounter {
 
 	// USUARIOS
 
-	public String createUser(String dni, String name, String surnames, String email) {
+	public String createUser(String dni, String name, String surnames, String email) throws IOException {
 		try {
 			String result = managerUsers.createUser(dni, name, surnames, email);
 			logger.writeLog("CREAR USUARIO - DNI: " + dni + " | " + result);
@@ -187,13 +188,13 @@ public class TotalManagerEuskalEncounter {
 		return managerUsers.listUsers();
 	}
 
-	public String getUserByDni(String dni) {
+	public String getUserByDni(String dni) throws IOException {
 		String result = managerUsers.getUserByDni(dni);
 		logger.writeLog("BUSCAR USUARIO - DNI: " + dni);
 		return result;
 	}
 
-	public String updateUser(User user) {
+	public String updateUser(User user) throws IOException {
 		try {
 			String result = managerUsers.updateUser(user);
 			logger.writeLog("ACTUALIZAR USUARIO - DNI: " + user.getDni() + " | " + result);
@@ -204,7 +205,7 @@ public class TotalManagerEuskalEncounter {
 		}
 	}
 
-	public String deleteUser(String dni) {
+	public String deleteUser(String dni) throws IOException {
 		try {
 			String result = managerUsers.deleteUser(dni);
 			logger.writeLog("ELIMINAR USUARIO - DNI: " + dni + " | " + result);
