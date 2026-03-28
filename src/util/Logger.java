@@ -13,27 +13,23 @@ public class Logger {
 	private static final String FILE_PATH = "log.txt";
 	private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-	public void writeLog(String action) {
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true))) {
-			String timestamp = LocalDateTime.now().format(formatter);
-			writer.write("[" + timestamp + "] ACCIÓN: " + action);
-			writer.newLine();
-		} catch (IOException e) {
-		}
+	public void writeLog(String action) throws IOException {
+		BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_PATH, true));
+		String timestamp = LocalDateTime.now().format(formatter);
+		writer.write("[" + timestamp + "] ACCIÓN: " + action);
+		writer.newLine();
 	}
 
-	public String readLog() {
+	public String readLog() throws IOException {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\n--- CONTENIDO DEL FICHERO LOG ---\n");
 
-		try (BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH))) {
-			String line;
-			while ((line = reader.readLine()) != null) {
-				sb.append(line).append("\n");
-			}
-		} catch (IOException e) {
-			return "Error al leer el archivo log.txt o el archivo aún no existe.";
+		BufferedReader reader = new BufferedReader(new FileReader(FILE_PATH));
+		String line;
+		while ((line = reader.readLine()) != null) {
+			sb.append(line).append("\n");
 		}
+
 		return sb.toString();
 	}
 }
